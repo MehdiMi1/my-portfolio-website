@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}
+    {{ t.stories_page_title }} | Mi Design
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ t.stories_header_title }}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.stories_header_subtitle }}</p>
+    </div>
+</section>
+
+<section class="stories-intro-section">
+    <div class="container">
+        <div class="stories-intro-content reveal-on-scroll">
+            <h2>{{ t.stories_intro_title }}</h2>
+            <p>{{ t.stories_intro_desc }}</p>
+        </div>
+    </div>
+</section>
+
+<div class="stories-container">
+    {% for story in stories %}
+    <section class="story-parallax-item">
+        <div class="parallax-bg" style="background-image: url('{{ url_for('static', filename='images/stories/' + story.image_file) if story.image_file else '' }}');"></div>
+        <div class="story-content container">
+            <h2 class="story-title">{{ story.title }}</h2>
+            <p class="story-excerpt">{{ story.excerpt }}</p>
+            <a href="{{ url_for('story_detail', lang=lang, slug=story.slug) }}" class="btn btn-primary">
+                {{ t.stories_continue_reading }}
+            </a>
+        </div>
+    </section>
+    {% else %}
+    <section class="page-header" style="background-color: transparent;">
+        <div class="container">
+            <p>{{ t.stories_no_stories_yet }}</p>
+        </div>
+    </section>
+    {% endfor %}
+</div>
+{% endblock %}

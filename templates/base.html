@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+{% set view_args = request.view_args.copy() %}
+{% set _ = view_args.pop('lang', None) %}
+{% set t = translations[lang] %}
+
+<html lang="{{ lang }}" dir="{{ 'rtl' if lang in ['fa', 'ar'] else 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ t.default_title_tag }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        // Pass translations and current language to JavaScript
+        window.translations = {{ translations | tojson }};
+        window.currentLang = "{{ lang }}";
+    </script>
+</head>
+<body class="lang-{{ lang }}">
+    <div class="preloader" id="preloader">
+        <div class="preloader-logo-container">
+            <svg class="logo-sparkle" width="60" height="60" viewBox="0 0 24 24"><path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z"/></svg>
+        </div>
+        <div class="preloader-curtains">
+            <div class="preloader-panel"></div>
+            <div class="preloader-panel"></div>
+            <div class="preloader-panel"></div>
+            <div class="preloader-panel"></div>
+            <div class="preloader-panel"></div>
+        </div>
+    </div>
+
+    <header class="header">
+        <nav class="container">
+            <a href="{{ url_for('home', lang=lang) }}" class="logo">
+                <svg class="logo-sparkle" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" stroke="currentColor" stroke-width="1.5"/><path d="M5 2L6 5L9 6L6 7L5 10L4 7L1 6L4 5L5 2Z" stroke="currentColor" stroke-width="1.5"/><path d="M19 14L18 17L15 18L18 19L19 22L20 19L23 18L20 17L19 14Z" stroke="currentColor" stroke-width="1.5"/></svg>
+                <span>Mi Design</span>
+            </a>
+
+            <div class="nav-center">
+                <ul class="nav-menu desktop-nav">
+                    <li><a href="{{ url_for('home', lang=lang) }}">{{ t.nav_home }}</a></li>
+                    <li><a href="{{ url_for('projects', lang=lang) }}">{{ t.nav_projects }}</a></li>
+                    <li><a href="{{ url_for('blog', lang=lang) }}">{{ t.nav_blog }}</a></li>
+                    <li><a href="{{ url_for('stories', lang=lang) }}">{{ t.nav_stories }}</a></li>
+                    <li><a href="{{ url_for('ai_assistant', lang=lang) }}">{{ t.nav_ai }}</a></li>
+                    <li><a href="{{ url_for('about', lang=lang) }}">{{ t.nav_about }}</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-right">
+                <div class="language-switcher">
+                    <button class="lang-selector-btn" id="lang-selector-btn">
+                        <span>{{ t.lang_name }}</span>
+                        <i class="fa-solid fa-globe"></i>
+                    </button>
+                    <div class="lang-dropdown" id="lang-dropdown">
+                        <a href="{{ url_for(request.endpoint, lang='fa', **view_args) }}" class="lang-option">
+                            <svg class="flag-icon" viewBox="0 0 5 3"><path fill="#239F40" d="M0 0h5v1H0z"/><path fill="#fff" d="M0 1h5v1H0z"/><path fill="#D9002D" d="M0 2h5v1H0z"/></svg>
+                            <span>فارسی (FA)</span>
+                        </a>
+                        <a href="{{ url_for(request.endpoint, lang='en', **view_args) }}" class="lang-option">
+                            <svg class="flag-icon" viewBox="0 0 60 30"><clipPath id="a"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="b"><path d="M30 15h30v15zv15h30zM0 15h30V0h-30z"/></clipPath><g clip-path="url(#a)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#b)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>
+                            <span>English (EN)</span>
+                        </a>
+                        <a href="{{ url_for(request.endpoint, lang='ar', **view_args) }}" class="lang-option">
+                             <svg class="flag-icon" viewBox="0 0 18 12"><path fill="#007A3D" d="M0 0h18v12H0z"/><path fill="#FFF" d="M0 4h18v4H0z"/><path fill="#000" d="M0 8h18v4H0z"/><path d="M0 0l7 6-7 6V0z" fill="#CE1126"/></svg>
+                            <span>العربية (AR)</span>
+                        </a>
+                         <a href="{{ url_for(request.endpoint, lang='de', **view_args) }}" class="lang-option">
+                            <svg class="flag-icon" viewBox="0 0 5 3"><path d="M0 0h5v1H0z"/><path fill="#D00" d="M0 1h5v1H0z"/><path fill="#FFCE00" d="M0 2h5v1H0z"/></svg>
+                            <span>Deutsch (DE)</span>
+                        </a>
+                    </div>
+                </div>
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Open Menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-nav" id="mobile-nav">
+        <ul class="nav-links">
+             <li><a href="{{ url_for('home', lang=lang) }}">{{ t.nav_home }}</a></li>
+             <li><a href="{{ url_for('projects', lang=lang) }}">{{ t.nav_projects }}</a></li>
+             <li><a href="{{ url_for('blog', lang=lang) }}">{{ t.nav_blog }}</a></li>
+             <li><a href="{{ url_for('stories', lang=lang) }}">{{ t.nav_stories }}</a></li>
+             <li><a href="{{ url_for('ai_assistant', lang=lang) }}">{{ t.nav_ai }}</a></li>
+             <li><a href="{{ url_for('about', lang=lang) }}">{{ t.nav_about }}</a></li>
+             <li><a href="{{ url_for('contact', lang=lang) }}">{{ t.nav_contact }}</a></li>
+        </ul>
+    </div>
+
+    <main class="content-entry">{% block content %}{% endblock %}</main>
+
+    <section class="final-cta-section">
+        <div class="container reveal-on-scroll">
+            <h2>{{ t.final_cta_title }}</h2>
+            <p>{{ t.final_cta_subtitle }}</p>
+            <a href="{{ url_for('contact', lang=lang) }}" class="btn btn-primary">{{ t.final_cta_button }} <i class="fa-solid fa-arrow-left"></i></a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col footer-about">
+                    <a href="{{ url_for('home', lang=lang) }}" class="logo">
+                        <span>Mi Design</span>
+                    </a>
+                    <p class="footer-description">{{ t.footer_description }}</p>
+                    <div class="social-icons">
+                         <a href="https://t.me/Mehdi_Mirzaee1" target="_blank" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                         <a href="https://www.instagram.com/mehdi_mi14?igsh=anl0dXR6dmVhb2k4" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                         <a href="https://github.com/MehdiMi1" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col footer-links">
+                    <h3>{{ t.footer_quick_links }}</h3>
+                    <ul>
+                        <li><a href="{{ url_for('home', lang=lang) }}">{{ t.nav_home }}</a></li>
+                        <li><a href="{{ url_for('about', lang=lang) }}">{{ t.nav_about }}</a></li>
+                        <li><a href="{{ url_for('projects', lang=lang) }}">{{ t.nav_projects }}</a></li>
+                        <li><a href="{{ url_for('blog', lang=lang) }}">{{ t.nav_blog }}</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col footer-contact">
+                    <h3>{{ t.footer_contact_me }}</h3>
+                    <ul>
+                        <li><a href="mailto:Mehdimirzaee1999.iran@gmail.com"><i class="fa-solid fa-envelope"></i> Mehdimirzaee1999.iran@gmail.com</a></li>
+                        <li><a href="tel:+989901798689"><i class="fa-solid fa-phone"></i> 0990 179 8689</a></li>
+                        <li><a href="{{ url_for('contact', lang=lang) }}" class="contact-button">{{ t.footer_send_message }}</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col footer-posts">
+                    <h3>{{ t.footer_latest_articles }}</h3>
+                    <ul>
+                        {% if latest_footer_posts %}
+                            {% for post in latest_footer_posts %}
+                            <li>
+                                <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}">{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}</a>
+                                <span class="post-date">{{ post.pub_date.strftime('%Y-%m-%d') }}</span>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li><p>{{ t.footer_no_articles }}</p></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>{{ t.footer_copyright }}</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top-btn" id="back-to-top" aria-label="Go to top"><i class="fa-solid fa-arrow-up"></i></a>
+    <div class="page-transition-overlay"></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

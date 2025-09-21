@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}
+    {{ t.resume_page_title }} | Mi Design
+{% endblock %}
+
+{% block content %}
+<div class="resume-container-wrapper">
+    <div class="resume-container">
+        <aside class="resume-sidebar">
+            <div class="resume-profile">
+                <div class="resume-avatar">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="48" fill="url(#avatar-gradient)"/>
+                        <path d="M35 80 C35 60, 65 60, 65 80" stroke="var(--bg-dark)" stroke-width="5" stroke-linecap="round"/>
+                        <circle cx="50" cy="45" r="15" stroke="var(--bg-dark)" stroke-width="5"/>
+                    </svg>
+                    <defs>
+                        <linearGradient id="avatar-gradient" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="var(--accent-gold)"/>
+                            <stop offset="100%" stop-color="var(--accent-blue-violet)"/>
+                        </linearGradient>
+                    </defs>
+                </div>
+                <h1 class="resume-name">{{ t.resume_name }}</h1>
+                <p class="resume-title">{{ t.resume_role }}</p>
+            </div>
+            <div class="resume-contact">
+                <h2 class="sidebar-title">{{ t.resume_contact_info }}</h2>
+                <ul>
+                    <li><i class="fa-solid fa-envelope"></i> Mehdimirzaee1999.iran@gmail.com</li>
+                    <li><i class="fa-solid fa-phone"></i> 0990 179 8689</li>
+                    <li><i class="fa-solid fa-globe"></i> MiDesign.com</li>
+                </ul>
+            </div>
+            <div class="resume-skills">
+                <h2 class="sidebar-title">{{ t.resume_key_skills }}</h2>
+                <ul>
+                    <li>Python & Flask</li>
+                    <li>JavaScript (ES6+)</li>
+                    <li>HTML5 & CSS3</li>
+                    <li>SQLAlchemy & Databases</li>
+                    <li>UI/UX Design (Figma)</li>
+                    <li>Git & Version Control</li>
+                </ul>
+            </div>
+        </aside>
+        <main class="resume-main">
+            <section class="resume-section">
+                <h2 class="main-title">{{ t.resume_about_me }}</h2>
+                <p>{{ t.resume_about_me_desc }}</p>
+            </section>
+            <section class="resume-section">
+                <h2 class="main-title">{{ t.resume_experience }}</h2>
+                <div class="timeline">
+                    <article class="timeline-item">
+                        <h3 class="item-title">{{ t.resume_job1_title }}</h3>
+                        <p class="item-meta">{{ t.resume_job1_meta }}</p>
+                        <p class="item-description">{{ t.resume_job1_desc }}</p>
+                    </article>
+                </div>
+            </section>
+             <section class="resume-section">
+                <h2 class="main-title">{{ t.resume_education }}</h2>
+                <div class="timeline">
+                    <article class="timeline-item">
+                        <h3 class="item-title">{{ t.resume_edu1_title }}</h3>
+                        <p class="item-meta">{{ t.resume_edu1_meta }}</p>
+                    </article>
+                    <article class="timeline-item">
+                        <h3 class="item-title">{{ t.resume_edu2_title }}</h3>
+                        <p class="item-meta">{{ t.resume_edu2_meta }}</p>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+{% endblock %}

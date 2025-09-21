@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ t.ai_page_title }} | Mi Design{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ t.ai_header_title }}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.ai_header_subtitle }}</p>
+    </div>
+</section>
+
+<section class="ai-chat-section">
+    <div class="container">
+        <div class="chat-container">
+            <div class="ai-mode-selector" id="ai-mode-selector">
+                <button class="ai-mode-btn active" data-mode="qa">
+                    <i class="fa-solid fa-comments"></i> {{ t.ai_mode_qa }}
+                </button>
+                <button class="ai-mode-btn" data-mode="image">
+                    <i class="fa-solid fa-image"></i> {{ t.ai_mode_image }}
+                </button>
+                <button class="ai-mode-btn" data-mode="video">
+                    <i class="fa-solid fa-video"></i> {{ t.ai_mode_video }}
+                </button>
+            </div>
+            <div class="chat-box" id="chat-box">
+                <div class="chat-message ai-message">
+                    <div class="message-avatar">✨</div>
+                    <div class="message-content">
+                        <p>{{ t.ai_welcome_message }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                <span></span><span></span><span></span>
+            </div>
+            <form class="chat-input-form" id="chat-form">
+                <input type="text" id="user-input" placeholder="{{ t.ai_input_placeholder }}" autocomplete="off" required>
+                <button type="submit" aria-label="{{ t.ai_send_button }}">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

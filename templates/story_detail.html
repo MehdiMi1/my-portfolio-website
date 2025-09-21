@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ story.title }} | Mi Design{% endblock %}
+
+{% block content %}
+<section class="story-detail-hero">
+    <div class="story-detail-hero-bg" style="background-image: url('{{ url_for('static', filename='images/stories/' + story.image_file) if story.image_file else '' }}');"></div>
+    <div class="container">
+        <div class="story-detail-header">
+            <h1 class="reveal-on-scroll">{{ story.title }}</h1>
+            <div class="story-meta-detail reveal-on-scroll" style="transition-delay: 0.2s;">
+                <span>
+                    <i class="fa-solid fa-calendar-days"></i> 
+                    {{ t.story_published_on }}
+                    {{ story.pub_date.strftime('%Y/%m/%d') }}
+                </span>
+                <span>
+                    <i class="fa-solid fa-user"></i> 
+                    {{ t.post_written_by }}
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="story-main-content-wrapper">
+    <div class="container">
+        <article class="story-body">
+            {{ story.content | markdown | safe }}
+        </article>
+    </div>
+</div>
+
+<section class="back-link-section">
+    <div class="container">
+        <a href="{{ url_for('stories', lang=lang) }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-right"></i> 
+            {{ t.story_back_to_stories }}
+        </a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}
+    {{ t.blog_page_title }} | Mi Design
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ t.blog_header_title }}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.blog_header_subtitle }}</p>
+    </div>
+</section>
+
+<section class="blog-section features">
+    <div class="container">
+        <h2 class="section-title reveal-on-scroll">{{ t.blog_latest_articles }}</h2>
+
+        <div class="blog-filters reveal-on-scroll" id="blog-filters">
+            <button class="filter-btn active" data-filter="all">
+                {{ t.blog_all_categories }}
+            </button>
+            {% for category in categories %}
+            <button class="filter-btn" data-filter="{{ category }}">{{ category }}</button>
+            {% endfor %}
+        </div>
+
+        <div class="blog-grid">
+            {% for post in posts %}
+            <div class="post-card reveal-on-scroll" data-category="{% if lang == 'fa' %}{{ post.category_fa }}{% elif lang == 'en' %}{{ post.category_en }}{% elif lang == 'ar' %}{{ post.category_ar }}{% else %}{{ post.category_de }}{% endif %}">
+                <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="post-image-link">
+                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}">
+                </a>
+                <div class="post-content">
+                    <span class="post-category">{% if lang == 'fa' %}{{ post.category_fa }}{% elif lang == 'en' %}{{ post.category_en }}{% elif lang == 'ar' %}{{ post.category_ar }}{% else %}{{ post.category_de }}{% endif %}</span>
+                    <h3><a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}">{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}</a></h3>
+                    <div class="post-meta">
+                        <span><i class="fa-solid fa-user"></i> {{ t.blog_author_name }}</span>
+                        <span><i class="fa-solid fa-calendar-days"></i> {{ post.pub_date.strftime('%Y/%m/%d') }}</span>
+                    </div>
+                    {% set content = post.content_fa if lang == 'fa' else post.content_en if lang == 'en' else post.content_ar if lang == 'ar' else post.content_de %}
+                    <p>{{ (content or '') | striptags | truncate(110) }}</p>
+                    <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="read-more">
+                        {{ t.blog_read_more }}
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+            {% else %}
+                <p style="text-align: center; width: 100%;">
+                    {{ t.blog_no_articles_yet }}
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

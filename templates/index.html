@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ t.nav_home }} | Mi Design{% endblock %}
+
+{% block meta_description %}
+{{ t.meta_description }}
+{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1 class="reveal-on-scroll">{{ t.hero_title }}</h1>
+                <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.hero_subtitle }}</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('projects', lang=lang) }}" class="btn btn-primary">{{ t.btn_view_projects }} <i class="fa-solid fa-arrow-left"></i></a>
+                    <a href="{{ url_for('contact', lang=lang) }}" class="btn btn-secondary">{{ t.btn_free_consult }}</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="{{ url_for('static', filename='images/hero-collaborative-tech-team.jpg') }}" alt="{{ t.hero_title }}">
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title reveal-on-scroll">{{ t.expertise_title }}</h2>
+            <div class="features-grid">
+                <div class="feature-card reveal-on-scroll">
+                    <div class="feature-icon"><i class="fa-solid fa-pen-ruler"></i></div>
+                    <h3>{{ t.expertise_1_title }}</h3>
+                    <p>{{ t.expertise_1_desc }}</p>
+                </div>
+                <div class="feature-card reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="feature-icon"><i class="fa-solid fa-code"></i></div>
+                    <h3>{{ t.expertise_2_title }}</h3>
+                    <p>{{ t.expertise_2_desc }}</p>
+                </div>
+                <div class="feature-card reveal-on-scroll" style="transition-delay: 0.4s;">
+                    <div class="feature-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <h3>{{ t.expertise_3_title }}</h3>
+                    <p>{{ t.expertise_3_desc }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="process-section">
+      <div class="container">
+        <h2 class="section-title reveal-on-scroll">{{ t.process_title }}</h2>
+        <div class="process-steps">
+            <div class="step-item reveal-on-scroll">
+                <div class="step-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div class="step-number">1</div>
+                <h3 class="step-title">{{ t.process_step1_title }}</h3>
+                <p class="step-description">{{ t.process_step1_desc }}</p>
+            </div>
+            <div class="step-item reveal-on-scroll" style="transition-delay: 0.2s;">
+                <div class="step-icon"><i class="fa-solid fa-drafting-compass"></i></div>
+                <div class="step-number">2</div>
+                <h3 class="step-title">{{ t.process_step2_title }}</h3>
+                <p class="step-description">{{ t.process_step2_desc }}</p>
+            </div>
+            <div class="step-item reveal-on-scroll" style="transition-delay: 0.4s;">
+                <div class="step-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                <div class="step-number">3</div>
+                <h3 class="step-title">{{ t.process_step3_title }}</h3>
+                <p class="step-description">{{ t.process_step3_desc }}</p>
+            </div>
+            <div class="step-item reveal-on-scroll" style="transition-delay: 0.6s;">
+                <div class="step-icon"><i class="fa-solid fa-vial-circle-check"></i></div>
+                <div class="step-number">4</div>
+                <h3 class="step-title">{{ t.process_step4_title }}</h3>
+                <p class="step-description">{{ t.process_step4_desc }}</p>
+            </div>
+             <div class="step-item reveal-on-scroll" style="transition-delay: 0.8s;">
+                <div class="step-icon"><i class="fa-solid fa-rocket"></i></div>
+                <div class="step-number">5</div>
+                <h3 class="step-title">{{ t.process_step5_title }}</h3>
+                <p class="step-description">{{ t.process_step5_desc }}</p>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-spotlight-section">
+        <div class="container">
+            <div class="cta-spotlight-content reveal-on-scroll">
+                {% if lang == 'fa' %}
+                    <h2 class="section-title">بیایید یک شاهکار خلق کنیم</h2>
+                    <p>چه یک وب‌سایت شخصی برای نمایش هنرتان بخواهید، چه یک فروشگاه آنلاین قدرتمند یا یک اپلیکیشن تحت وب پیچیده، من اینجا هستم تا ایده‌های شما را به واقعیت دیجیتال تبدیل کنم.</p>
+                {% elif lang == 'en' %}
+                    <h2 class="section-title">Let's Create a Masterpiece</h2>
+                    <p>Whether you need a personal website to showcase your art, a powerful e-commerce store, or a complex web application, I'm here to turn your ideas into digital reality.</p>
+                {% else %}
+                    <h2 class="section-title">لنصنع تحفة فنية</h2>
+                    <p>سواء كنت تحتاج إلى موقع شخصي لعرض فنك، أو متجر إلكتروني قوي، أو تطبيق ويب معقد، أنا هنا لتحويل أفكارك إلى حقيقة رقمية.</p>
+                {% endif %}
+                
+                <ul class="project-types-list">
+                    <li><i class="fa-solid fa-user-tie"></i> <span>{% if lang == 'fa' %}سایت‌های شخصی و پورتفولیو{% else %}Personal & Portfolio Sites{% endif %}</span></li>
+                    <li><i class="fa-solid fa-store"></i> <span>{% if lang == 'fa' %}فروشگاه‌های آنلاین{% else %}E-commerce Stores{% endif %}</span></li>
+                    <li><i class="fa-solid fa-building"></i> <span>{% if lang == 'fa' %}وب‌سایت‌های شرکتی{% else %}Corporate Websites{% endif %}</span></li>
+                    <li><i class="fa-solid fa-mobile-screen-button"></i> <span>{% if lang == 'fa' %}اپلیکیشن‌های تحت وب{% else %}Web Applications{% endif %}</span></li>
+                </ul>
+                <a href="{{ url_for('contact', lang=lang) }}" class="btn btn-primary">{{ t.final_cta_button }} <i class="fa-solid fa-arrow-left"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="latest-blog-section">
+      <div class="container">
+        <h2 class="section-title reveal-on-scroll">{{ t.latest_blog_title }}</h2>
+        <div class="blog-grid-preview">
+            {% for post in latest_posts %}
+            <div class="post-card reveal-on-scroll">
+                <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="post-image-link">
+                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{{ post['title_' + lang] }}">
+                </a>
+                <div class="post-content">
+                    <span class="post-category">{{ post['category_' + lang] }}</span>
+                    <h3><a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}">{{ post['title_' + lang] }}</a></h3>
+                    <p>{{ (post['content_' + lang] | striptags | truncate(100)) }}</p>
+                    <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="read-more">
+                        {{ t.blog_read_more }}
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-cta reveal-on-scroll">
+            <a href="{{ url_for('blog', lang=lang) }}" class="btn btn-secondary">
+                {{ t.view_all_articles }}
+            </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="lead-magnet-section-new">
+        <div class="container">
+            <div class="lead-magnet-grid">
+                <div class="lead-magnet-text reveal-on-scroll">
+                    <div class="lead-magnet-icon"><i class="fa-solid fa-gem"></i></div>
+                    <h2>{{ t.lead_magnet_new_title }}</h2>
+                    <p>{{ t.lead_magnet_new_desc }}</p>
+                    <a href="{{ url_for('contact', lang=lang) }}" class="btn btn-secondary" style="margin-top: 20px;">
+                        {{ t.lead_magnet_new_cta }}
+                    </a>
+                </div>
+                <div class="lead-magnet-image-container reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <img src="{{ url_for('static', filename='images/checklist-mockup.png') }}" alt="Checklist Mockup" class="lead-magnet-image">
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

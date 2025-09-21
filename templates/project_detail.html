@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}
+    {% if lang == 'fa' %}{{ project.title_fa }}{% elif lang == 'en' %}{{ project.title_en }}{% elif lang == 'ar' %}{{ project.title_ar }}{% else %}{{ project.title_de }}{% endif %} | Mi Design
+{% endblock %}
+
+{% block content %}
+<section class="post-detail-container">
+
+    <header class="post-detail-header" style="background-image: url('{{ url_for('static', filename='images/projects/' + project.image_file) if project.image_file else '' }}');">
+        <div class="post-header-overlay">
+            <div class="container">
+                <span class="post-category-detail reveal-on-scroll">پروژه</span>
+                <h1 class="reveal-on-scroll" style="transition-delay: 0.2s;">
+                    {% if lang == 'fa' %}{{ project.title_fa }}{% elif lang == 'en' %}{{ project.title_en }}{% elif lang == 'ar' %}{{ project.title_ar }}{% else %}{{ project.title_de }}{% endif %}
+                </h1>
+                
+                {% set tags = project.tags_fa if lang == 'fa' else project.tags_en if lang == 'en' else project.tags_ar if lang == 'ar' else project.tags_de %}
+                {% if tags %}
+                <div class="project-tags-detail reveal-on-scroll" style="transition-delay: 0.4s;">
+                    {% for tag in tags.split(',') %}
+                        <span>{{ tag.strip() }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="post-main-content-wrapper">
+        <div class="container">
+            <article class="post-body">
+                {% set content = project.content_fa if lang == 'fa' else project.content_en if lang == 'en' else project.content_ar if lang == 'ar' else project.content_de %}
+                {{ (content or '') | markdown | safe }}
+            </article>
+        </div>
+    </div>
+
+    <section class="back-link-section">
+        <div class="container">
+            <a href="{{ url_for('projects', lang=lang) }}" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-right"></i> 
+                بازگشت به همه پروژه‌ها
+            </a>
+        </div>
+    </section>
+
+</section>
+{% endblock %}

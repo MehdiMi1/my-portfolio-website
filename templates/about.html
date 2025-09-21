@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ t.about_page_title }} | Mi Design{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ t.about_header_title }}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.about_header_subtitle }}</p>
+    </div>
+</section>
+
+<section class="about-story features">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-image reveal-on-scroll">
+                <img src="{{ url_for('static', filename='images/about-creative-brainstorm-session.jpg') }}" alt="فضای داخلی یک دفتر طراحی">
+            </div>
+            <div class="about-text reveal-on-scroll" style="transition-delay: 0.3s;">
+                <h2>{{ t.about_philosophy_title }}</h2>
+                <p>{{ t.about_philosophy_p1 }}</p>
+                <p>{{ t.about_philosophy_p2 }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="founder-section">
+    <div class="container">
+        <h2 class="section-title reveal-on-scroll">{{ t.about_founder_title }}</h2>
+        <div class="founder-grid">
+            <div class="founder-bio reveal-on-scroll">
+                <h3 class="founder-name">{{ t.about_founder_name }}</h3>
+                <span class="founder-role">{{ t.about_founder_role }}</span>
+                
+                {% if lang == 'fa' %}
+                    <p class="founder-description">
+                        من یک توسعه‌دهنده و طراح وب هستم که دنیای منطقی کدها را با درک عمیق روانشناسی انسان پیوند می‌زنم. تحصیل در مقطع کارشناسی ارشد روانشناسی به من این توانایی را داده تا محصولاتی خلق کنم که نه تنها زیبا و کارآمد، بلکه عمیقاً با نیازهای کاربر همسو باشند.
+                    </p>
+                    <p class="founder-description">
+                        خارج از دنیای دیجیتال، به عنوان یک گیتاریست، خلاقیت را در موسیقی جستجو می‌کنم و به عنوان یک تریدر، با نگاهی استراتژیک و تحلیلی، نبض بازارهای نوین را دنبال می‌کنم. این ترکیب منحصربه‌فرد از هنر، علم و تکنولوژی، به من اجازه می‌دهد تا برای هر چالش، راه‌حلی خلاقانه و هوشمندانه پیدا کنم.
+                    </p>
+                {% elif lang == 'en' %}
+                     <p class="founder-description">
+                        I am a developer and web designer who bridges the logical world of code with a deep understanding of human psychology. Studying for a Master's degree in Psychology has equipped me to create products that are not only beautiful and functional but also deeply aligned with user needs.
+                    </p>
+                    <p class="founder-description">
+                        Outside the digital realm, as a guitarist, I explore creativity through music, and as a trader, I follow the pulse of modern markets with a strategic and analytical eye. This unique blend of art, science, and technology allows me to find creative and intelligent solutions for any challenge.
+                    </p>
+                {% else %}
+                    <p class="founder-description">
+                        أنا مطور ومصمم ويب أربط عالم الأكواد المنطقي بالفهم العميق لعلم النفس البشري. دراستي للماجستير في علم النفس منحتني القدرة على إنشاء منتجات ليست فقط جميلة وفعالة، ولكنها متوافقة بعمق مع احتياجات المستخدم.
+                    </p>
+                    <p class="founder-description">
+                        خارج العالم الرقمي، كعازف جيتار، أبحث عن الإبداع في الموسيقى، وكمتداول، أتابع نبض الأسواق الحديثة بنظرة استراتيجية وتحليلية. هذا المزيج الفريد من الفن والعلم والتكنولوجيا يسمح لي بإيجاد حلول إبداعية وذكية لكل تحد.
+                    </p>
+                {% endif %}
+
+                <div class="social-icons">
+                    <a href="https://t.me/Mehdi_Mirzaee1" target="_blank" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://www.instagram.com/mehdi_mi14?igsh=anl0dXR6dmVhb2k4" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://github.com/MehdiMi1" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+            <div class="founder-visual reveal-on-scroll" style="transition-delay: 0.3s;">
+                <div class="founder-image-placeholder">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="values-section features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-card reveal-on-scroll">
+                <div class="feature-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                {% if lang == 'fa' %}
+                    <h3>خلاقیت در عمل</h3>
+                    <p>ترکیب هنر و تکنولوژی برای ارائه راه‌حل‌هایی که نه تنها کار می‌کنند، بلکه الهام‌بخش هستند.</p>
+                {% else %}
+                    <h3>Creativity in Action</h3>
+                    <p>Blending art and technology to deliver solutions that not only work but also inspire.</p>
+                {% endif %}
+            </div>
+            <div class="feature-card reveal-on-scroll" style="transition-delay: 0.2s;">
+                <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+                 {% if lang == 'fa' %}
+                    <h3>طراحی کاربر-محور</h3>
+                    <p>استفاده از اصول روانشناسی برای ساختن تجربه‌هایی که برای انسان‌ها طراحی شده، نه فقط برای ماشین‌ها.</p>
+                {% else %}
+                     <h3>User-Centric Design</h3>
+                    <p>Applying psychological principles to build experiences designed for humans, not just for machines.</p>
+                {% endif %}
+            </div>
+            <div class="feature-card reveal-on-scroll" style="transition-delay: 0.4s;">
+                <div class="feature-icon"><i class="fa-solid fa-infinity"></i></div>
+                 {% if lang == 'fa' %}
+                    <h3>یادگیری بی‌پایان</h3>
+                    <p>تعهد به یادگیری مداوم و ماندن در لبه تکنولوژی برای ارائه بهترین و به‌روزترین راهکارها.</p>
+                {% else %}
+                    <h3>Endless Learning</h3>
+                    <p>A commitment to continuous learning and staying on the cutting edge of technology to provide the best solutions.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="skills-section">
+    <div class="container">
+        <h2 class="section-title reveal-on-scroll">{{ t.about_skills_title }}</h2>
+        <div class="skills-grid">
+            <div class="skill-card reveal-on-scroll">
+                <i class="fa-brands fa-python skill-icon"></i>
+                <h3 class="skill-title">Python & Flask</h3>
+            </div>
+            <div class="skill-card reveal-on-scroll" style="transition-delay: 0.1s;">
+                <i class="fa-brands fa-js-square skill-icon"></i>
+                <h3 class="skill-title">JavaScript</h3>
+            </div>
+            <div class="skill-card reveal-on-scroll" style="transition-delay: 0.2s;">
+                <i class="fa-brands fa-figma skill-icon"></i>
+                <h3 class="skill-title">UI/UX Design</h3>
+            </div>
+             <div class="skill-card reveal-on-scroll" style="transition-delay: 0.3s;">
+                <i class="fa-solid fa-chart-line skill-icon"></i>
+                <h3 class="skill-title">Trading & Analysis</h3>
+            </div>
+             <div class="skill-card reveal-on-scroll" style="transition-delay: 0.4s;">
+                <i class="fa-solid fa-guitar skill-icon"></i>
+                <h3 class="skill-title">Music & Creativity</h3>
+            </div>
+            <div class="skill-card reveal-on-scroll" style="transition-delay: 0.5s;">
+                <i class="fa-solid fa-database skill-icon"></i>
+                <h3 class="skill-title">Databases</h3>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ t.projects_page_title }} | Mi Design{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ t.projects_header_title }}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.projects_header_subtitle }}</p>
+    </div>
+</section>
+
+<section class="projects-section features">
+    <div class="container">
+        <div class="projects-grid">
+            
+            {% for project in projects %}
+            <div class="project-card reveal-on-scroll">
+                
+                {% if project.project_url and project.project_url != '#' %}
+                    <a href="{{ project.project_url }}" {% if 'http' in project.project_url %}target="_blank"{% endif %} class="project-image-link">
+                {% else %}
+                    <a href="{{ url_for('project_detail', lang=lang, slug=project.slug) }}" class="project-image-link">
+                {% endif %}
+
+                    <img src="{{ url_for('static', filename='images/projects/' + project.image_file) if project.image_file else '' }}" alt="{% if lang == 'fa' %}{{ project.title_fa }}{% elif lang == 'en' %}{{ project.title_en }}{% elif lang == 'ar' %}{{ project.title_ar }}{% else %}{{ project.title_de }}{% endif %}">
+                    <div class="project-overlay">
+                        <h3>{% if lang == 'fa' %}{{ project.title_fa }}{% elif lang == 'en' %}{{ project.title_en }}{% elif lang == 'ar' %}{{ project.title_ar }}{% else %}{{ project.title_de }}{% endif %}</h3>
+                        <p class="project-description">{% if lang == 'fa' %}{{ project.description_fa }}{% elif lang == 'en' %}{{ project.description_en }}{% elif lang == 'ar' %}{{ project.description_ar }}{% else %}{{ project.description_de }}{% endif %}</p>
+                        
+                        {% set tags = project.tags_fa if lang == 'fa' else project.tags_en if lang == 'en' else project.tags_ar if lang == 'ar' else project.tags_de %}
+                        {% if tags %}
+                        <div class="project-tags">
+                            {% for tag in tags.split(',') %}
+                                <span>{{ tag.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <span class="view-project-link">
+                            {{ t.projects_view_project }}
+                            <i class="fa-solid fa-external-link-alt"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            
+            <div class="project-card reveal-on-scroll">
+                <a href="{{ url_for('contact', lang=lang) }}" class="project-image-link">
+                    <img src="{{ url_for('static', filename='images/project-next-clean-slate.jpg') }}" alt="{{ t.projects_next_project_title }}">
+                    <div class="project-overlay">
+                        <h3>{{ t.projects_next_project_title }}</h3>
+                        <span class="view-project-link">{{ t.projects_next_project_cta }} <i class="fa-solid fa-arrow-left"></i></span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
