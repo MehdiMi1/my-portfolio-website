@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{% if lang == 'fa' %}{{ t.resume_pro_page_title }}{% else %}Professional Resume{% endif %}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{% if lang == 'fa' %}{{ t.resume_pro_header_title }}{% else %}Core Competencies & Work Experience{% endif %}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{% if lang == 'fa' %}{{ t.resume_pro_header_subtitle }}{% else %}5 years of experience in a similar job group{% endif %}</p>
+    </div>
+</section>
+
+<div class="resume-container-wrapper">
+    <div class="resume-container" style="grid-template-columns: 1fr; max-width: 900px;">
+        <main class="resume-main">
+            
+            <section class="resume-section">
+                <h2 class="main-title">{% if lang == 'fa' %}{{ t.resume_pro_skills_title }}{% else %}Key Skills According to Employers{% endif %}</h2>
+                <div class="skills-pills-container">
+                    {% set skills = t.resume_pro_skills_list if lang == 'fa' else translations.en.resume_pro_skills_list %}
+                    {% for skill in skills %}
+                    <div class="skill-pill">
+                        <span class="skill-name">{{ skill.name }}</span>
+                        <span class="skill-level">{% if lang == 'fa' %}{{ skill.level }}{% else %}Advanced{% endif %}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="resume-section">
+                <h2 class="main-title">{% if lang == 'fa' %}{{ t.resume_pro_duties_title }}{% else %}Job Description & Responsibilities{% endif %}</h2>
+                <div class="duties-list">
+                    {% set sections = t.resume_pro_duties_sections if lang == 'fa' else translations.en.resume_pro_duties_sections %}
+                    {% for section in sections %}
+                    <div class="duty-category">
+                        <h3>{{ section.title }}</h3>
+                        <ul>
+                            {% for item in section.items %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<style>
+    .skills-pills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .skill-pill {
+        display: flex;
+        align-items: center;
+        background-color: var(--secondary-surface);
+        border: 1px solid var(--border-color-dark);
+        border-radius: 50px;
+        overflow: hidden;
+        transition: var(--transition);
+    }
+    .skill-pill:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .skill-name {
+        padding: 10px 18px;
+        font-weight: 500;
+    }
+    .skill-level {
+        background-color: var(--accent-blue-violet);
+        color: white;
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+    .duties-list {
+        margin-top: 30px;
+    }
+    .duty-category {
+        margin-bottom: 40px;
+    }
+    .duty-category h3 {
+        font-size: 1.5rem;
+        color: var(--accent-gold);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color-dark);
+    }
+    .duty-category ul {
+        list-style: none;
+        padding-right: 0;
+    }
+    .duty-category li {
+        position: relative;
+        padding-right: 25px;
+        margin-bottom: 15px;
+        line-height: 1.8;
+    }
+    .duty-category li::before {
+        content: '✓';
+        position: absolute;
+        right: 0;
+        top: 2px;
+        color: var(--accent-gold);
+        font-weight: 900;
+    }
+    body.lang-en .duty-category li, body.lang-de .duty-category li {
+        padding-right: 0;
+        padding-left: 25px;
+    }
+    body.lang-en .duty-category li::before, body.lang-de .duty-category li::before {
+        right: auto;
+        left: 0;
+    }
+</style>
+{% endblock %}

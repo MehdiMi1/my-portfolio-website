@@ -4,7 +4,7 @@
 {% block title %}{{ t.nav_home }} | Mi Design{% endblock %}
 
 {% block meta_description %}
-{{ t.meta_description }}
+{{ t.meta_desc_home }}
 {% endblock %}
 
 {% block content %}
@@ -117,12 +117,13 @@
             {% for post in latest_posts %}
             <div class="post-card reveal-on-scroll">
                 <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="post-image-link">
-                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{{ post['title_' + lang] }}">
+                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}">
                 </a>
                 <div class="post-content">
-                    <span class="post-category">{{ post['category_' + lang] }}</span>
-                    <h3><a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}">{{ post['title_' + lang] }}</a></h3>
-                    <p>{{ (post['content_' + lang] | striptags | truncate(100)) }}</p>
+                    <span class="post-category">{% if lang == 'fa' %}{{ post.category_fa }}{% elif lang == 'en' %}{{ post.category_en }}{% elif lang == 'ar' %}{{ post.category_ar }}{% else %}{{ post.category_de }}{% endif %}</span>
+                    <h3><a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}">{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}</a></h3>
+                    {% set content = post.content_fa if lang == 'fa' else post.content_en if lang == 'en' else post.content_ar if lang == 'ar' else post.content_de %}
+                    <p>{{ (content or '') | striptags | truncate(100) }}</p>
                     <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="read-more">
                         {{ t.blog_read_more }}
                         <i class="fa fa-arrow-left"></i>

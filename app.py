@@ -341,6 +341,77 @@ A 50% reduction in the time required to prepare monthly reports and a 20% increa
 """
 }
 
+# --- NEW BLOG POST CONTENT ---
+new_post_content_fa = """
+### مقدمه: از تئوری تا عمل
+
+دانستن مفاهیم سئو یک چیز است، اما پیاده‌سازی عملی آن روی یک پروژه واقعی، تجربه‌ای کاملاً متفاوت است. در این مقاله، می‌خواهم فرآیندی را که برای بهینه‌سازی اولیه همین وب‌سایت (Mi Design) طی کردم، به عنوان یک نمونه کار عملی به اشتراک بگذارم. هدف، تبدیل یک سایت خوش‌ساخت به یک پلتفرم آماده برای دیده‌شدن در گوگل بود.
+
+### قدم اول: سنگ بنای تحلیل - نصب ابزارهای گوگل
+
+قبل از هرگونه بهینه‌سازی، باید بتوانیم نتایج را اندازه‌گیری کنیم. بدون داده، سئو مانند رانندگی با چشمان بسته است. به همین دلیل، اولین و مهم‌ترین قدم، اتصال سایت به دو ابزار قدرتمند گوگل بود:
+
+* **Google Analytics:** برای درک رفتار کاربران؛ اینکه از کجا می‌آیند، کدام صفحات را می‌بینند و چقدر در سایت می‌مانند.
+* **Google Search Console:** برای درک دیدگاه گوگل نسبت به سایت ما؛ اینکه صفحات ما در نتایج جستجو چگونه ظاهر می‌شوند و آیا مشکلات فنی وجود دارد یا خیر.
+
+نصب این ابزارها به ما یک خط مبنا (Baseline) برای سنجش موفقیت اقدامات بعدی می‌دهد.
+
+### قدم دوم: بهینه‌سازی محتوای روی صفحه (On-Page SEO)
+
+یک رتبه خوب در گوگل زمانی ارزشمند است که کاربر را به کلیک کردن ترغیب کند. **توضیحات متا (Meta Description)** متنی است که در نتایج جستجو زیر عنوان صفحه نمایش داده می‌شود و نقشی کلیدی در این تصمیم‌گیری دارد.
+
+من توضیحات متای صفحات اصلی مانند «صفحه نخست» و «درباره ما» را بازنویسی کردم تا نه تنها حاوی کلمات کلیدی مرتبط (مانند طراحی سایت با فلسک) باشند، بلکه کاربر را به بازدید از سایت دعوت کنند. این یک تغییر کوچک با تأثیر بالقوه بزرگ بر نرخ کلیک (CTR) است.
+
+### قدم سوم: بررسی سلامت فنی (Technical SEO)
+
+خوشبختانه، این وب‌سایت از ابتدا با زیربنای فنی خوبی طراحی شده بود. موارد کلیدی که بررسی و از صحت آن‌ها اطمینان حاصل شد عبارتند از:
+
+* **واکنش‌گرایی (Responsiveness):** نمایش بی‌نقص سایت در تمام دستگاه‌ها از موبایل تا دسکتپ.
+* **سرعت بارگذاری:** استفاده از کدهای بهینه و حجم کم، که یک فاکتور رتبه‌بندی مهم برای گوگل است.
+* **ساختار HTML معنایی (Semantic HTML):** استفاده صحیح از تگ‌های `<h1>`, `<section>`, `<nav>` و... که به درک بهتر محتوا توسط ربات‌های گوگل کمک می‌کند.
+
+### نتیجه‌گیری و قدم‌های بعدی
+
+بهینه‌سازی برای موتورهای جستجو یک پروژه یک‌باره نیست، بلکه یک فرآیند مداوم است. این سه قدم، پایه‌های اصلی را برای رشد ارگانیک سایت فراهم کردند.
+
+قدم‌های بعدی شامل تحقیق کلمات کلیدی برای مقالات آینده وبلاگ و تمرکز بر ایجاد محتوای ارزشمند است که به طور طبیعی بک‌لینک جذب کند. این نمونه کار نشان می‌دهد که چگونه می‌توان با چند اقدام استراتژیک، یک وب‌سایت را در مسیر درست برای موفقیت در گوگل قرار داد.
+"""
+
+new_post_content_en = """
+### Introduction: From Theory to Practice
+
+Knowing SEO concepts is one thing, but implementing them on a real project is a completely different experience. In this article, I want to share the process I went through for the initial optimization of this very website (Mi Design) as a practical case study. The goal was to turn a well-built site into a platform ready to be seen on Google.
+
+### Step 1: The Foundation of Analysis - Installing Google Tools
+
+Before any optimization, we must be able to measure the results. Without data, SEO is like driving with your eyes closed. For this reason, the first and most crucial step was connecting the site to two powerful Google tools:
+
+* **Google Analytics:** To understand user behavior—where they come from, which pages they view, and how long they stay on the site.
+* **Google Search Console:** To understand Google's perspective on our site—how our pages appear in search results and whether there are any technical issues.
+
+Installing these tools gives us a baseline to measure the success of subsequent actions.
+
+### Step 2: On-Page SEO Optimization
+
+A good ranking on Google is valuable only when it encourages a user to click. The **Meta Description** is the text displayed under the page title in search results and plays a key role in this decision.
+
+I rewrote the meta descriptions for key pages like the "Homepage" and "About Us" page to not only include relevant keywords (like "Flask website design") but also to invite the user to visit the site. This is a small change with a potentially large impact on the Click-Through Rate (CTR).
+
+### Step 3: Technical SEO Health Check
+
+Fortunately, this website was designed with a good technical foundation from the start. Key items that were reviewed and confirmed include:
+
+* **Responsiveness:** Flawless display of the site on all devices, from mobile to desktop.
+* **Loading Speed:** Use of optimized code and low file sizes, which is a critical ranking factor for Google.
+* **Semantic HTML Structure:** Correct use of tags like `<h1>`, `<section>`, `<nav>`, etc., which helps Google's bots better understand the content.
+
+### Conclusion & Next Steps
+
+Search engine optimization is not a one-time project but an ongoing process. These three steps have laid the essential groundwork for the site's organic growth.
+
+The next steps include keyword research for future blog articles and focusing on creating valuable content that naturally attracts backlinks. This case study demonstrates how a few strategic actions can set a website on the right path for success on Google.
+"""
+
 # --- Setup ---
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -465,6 +536,24 @@ def init_db_command():
         content_de=blog_content_de['how-i-built-this-website-with-flask']
     )
 
+    # --- NEW POST OBJECT ---
+    post4 = Post(
+        slug='how-i-optimized-this-site-for-seo',
+        image_file='seo-case-study.jpg',
+        title_fa='چگونه این سایت را برای سئو بهینه کردم: یک نمونه کار عملی',
+        title_en='How I Optimized This Site for SEO: A Practical Case Study',
+        title_ar='كيف قمت بتحسين هذا الموقع للسيو: دراسة حالة عملية',
+        title_de='Wie ich diese Seite für SEO optimiert habe: Eine praktische Fallstudie',
+        category_fa='سئو',
+        category_en='SEO',
+        category_ar='سيو',
+        category_de='SEO',
+        content_fa=new_post_content_fa,
+        content_en=new_post_content_en,
+        content_ar=new_post_content_en, # Using EN as placeholder
+        content_de=new_post_content_en  # Using EN as placeholder
+    )
+
     project1 = Project(
         slug='personal-portfolio-website',
         title_fa='وب‌سایت شخصی و نمونه کارها',
@@ -517,9 +606,9 @@ def init_db_command():
     story1 = Story(title='بازآفرینی یک برند', slug='reimagining-a-brand', excerpt='چگونه یک برند قدیمی را برای نسل جدید بازطراحی کردیم؟', content='متن کامل داستان...', image_file='story-brand-reimagined.jpg', display_order=1)
     story2 = Story(title='مصاحبه با یک مینیمالیست', slug='interview-with-a-minimalist', excerpt='گفتگویی با «سارا اکبری»، طراح UI.', content='متن کامل داستان...', image_file='story-minimalist-designer.jpg', display_order=2)
 
-    db.session.add_all([post1, post2, post3, project1, project2, project3, story1, story2])
+    db.session.add_all([post1, post2, post3, post4, project1, project2, project3, story1, story2])
     db.session.commit()
-    print("Database has been initialized and seeded successfully.")
+    print("Database has been initialized and seeded successfully with the new SEO post.")
 
 # --- Context Processor ---
 @app.context_processor
@@ -542,6 +631,35 @@ def inject_shared_data():
 @app.route('/')
 def index():
     return redirect(url_for('home', lang='fa'))
+
+@app.route('/sitemap.xml')
+def sitemap():
+    """Route for generating sitemap.xml."""
+    pages = []
+    
+    # Base URLs for static pages
+    static_pages = ['home', 'about', 'projects', 'blog', 'stories', 'ai_assistant', 'contact', 'resume_pro']
+    for lang in ['fa', 'en', 'ar', 'de']:
+        for page in static_pages:
+            pages.append(url_for(page, lang=lang, _external=True))
+
+    # URLs for blog posts
+    posts = Post.query.order_by(Post.pub_date.desc()).all()
+    for lang in ['fa', 'en', 'ar', 'de']:
+        for post in posts:
+            pages.append(url_for('post_detail', lang=lang, slug=post.slug, _external=True))
+            
+    # URLs for project details
+    projects_with_details = Project.query.filter(Project.project_url == None).all()
+    for lang in ['fa', 'en', 'ar', 'de']:
+        for project in projects_with_details:
+            pages.append(url_for('project_detail', lang=lang, slug=project.slug, _external=True))
+
+    sitemap_xml = render_template('sitemap.xml', pages=pages)
+    response = make_response(sitemap_xml)
+    response.headers["Content-Type"] = "application/xml"
+    
+    return response
 
 @app.route('/<lang>/')
 def home(lang):
@@ -566,13 +684,17 @@ def projects(lang):
 def project_detail(lang, slug):
     if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
     project = Project.query.filter_by(slug=slug).first_or_404()
-    # This check prevents the error for projects without detailed content
     if not project.content_fa and not project.content_en:
         if project.project_url:
             return redirect(project.project_url)
         else:
             return redirect(url_for('projects', lang=lang))
     return render_template('project_detail.html', project=project)
+    
+@app.route('/<lang>/resume-pro')
+def resume_pro(lang):
+    if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
+    return render_template('resume_pro.html')
 
 @app.route('/<lang>/blog')
 def blog(lang):
@@ -660,7 +782,7 @@ def ask_api():
     except Exception as e:
         print(f"An error occurred: {e}")
         error_lang = session.get('lang', 'fa')
-        error_message = translations.get(error_lang, {}).get('js_ai_error', 'An error occurred.')
+        error_message = translations.get(error_lang, {}).get('js_ai_error', 'An API error occurred.')
         return jsonify({'text': error_message}), 500
 
 if __name__ == '__main__':
