@@ -3,7 +3,7 @@ import json
 import datetime
 import click
 import google.generativeai as genai
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, make_response
 from flask_sqlalchemy import SQLAlchemy
 from markdown import markdown
 
