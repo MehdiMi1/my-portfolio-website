@@ -6,6 +6,8 @@ import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, make_response
 from flask_sqlalchemy import SQLAlchemy
 from markdown import markdown
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 # --- Import API Key from config.py ---
 try:
@@ -488,6 +490,14 @@ class Story(db.Model):
     image_file = db.Column(db.String(100), nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     display_order = db.Column(db.Integer, default=100)
+    
+# --- SECURE ADMIN VIEW ---
+class AdminView(ModelView):
+    def is_accessible(self):
+        return session.get('user') == 'admin'
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
 
 # --- DB Initialization Command (UPDATED) ---
 @app.cli.command('init-db')
@@ -609,6 +619,12 @@ def init_db_command():
     db.session.add_all([post1, post2, post3, post4, project1, project2, project3, story1, story2])
     db.session.commit()
     print("Database has been initialized and seeded successfully with the new SEO post.")
+
+# --- ADMIN PANEL SETUP ---
+admin = Admin(app, name='MiGallery Admin', template_mode='bootstrap3')
+admin.add_view(AdminView(Post, db.session))
+admin.add_view(AdminView(Project, db.session))
+admin.add_view(AdminView(Story, db.session))
 
 # --- Context Processor ---
 @app.context_processor
@@ -784,6 +800,29 @@ def ask_api():
         error_lang = session.get('lang', 'fa')
         error_message = translations.get(error_lang, {}).get('js_ai_error', 'An API error occurred.')
         return jsonify({'text': error_message}), 500
+        
+# --- Login/Logout for Admin ---
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # NOTE: In a real app, use a proper user database and hashed passwords!
+        if request.form.get('username') == 'admin' and request.form.get('password') == 'your_strong_password':
+            session['user'] = 'admin'
+            return redirect('/admin')
+        else:
+            return "Invalid credentials", 401
+    return '''
+        <form method="post">
+            Username: <input type="text" name="username"><br>
+            Password: <input type="password" name="password"><br>
+            <input type="submit" value="Login">
+        </form>
+    '''
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/admin')
 
 if __name__ == '__main__':
     app.run(debug=True)
