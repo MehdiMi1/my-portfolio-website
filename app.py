@@ -439,7 +439,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'bl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# --- Database Models (UPDATED) ---
+# --- Database Models ---
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(120), unique=True, nullable=False)
@@ -490,7 +490,7 @@ class Story(db.Model):
     image_file = db.Column(db.String(100), nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     display_order = db.Column(db.Integer, default=100)
-    
+
 # --- SECURE ADMIN VIEW ---
 class AdminView(ModelView):
     def is_accessible(self):
@@ -499,7 +499,7 @@ class AdminView(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
 
-# --- DB Initialization Command (UPDATED) ---
+# --- DB Initialization Command ---
 @app.cli.command('init-db')
 def init_db_command():
     db.drop_all()
@@ -545,8 +545,6 @@ def init_db_command():
         content_ar=blog_content_ar['how-i-built-this-website-with-flask'],
         content_de=blog_content_de['how-i-built-this-website-with-flask']
     )
-
-    # --- NEW POST OBJECT ---
     post4 = Post(
         slug='how-i-optimized-this-site-for-seo',
         image_file='seo-case-study.jpg',
@@ -560,10 +558,9 @@ def init_db_command():
         category_de='SEO',
         content_fa=new_post_content_fa,
         content_en=new_post_content_en,
-        content_ar=new_post_content_en, # Using EN as placeholder
-        content_de=new_post_content_en  # Using EN as placeholder
+        content_ar=new_post_content_en,
+        content_de=new_post_content_en
     )
-
     project1 = Project(
         slug='personal-portfolio-website',
         title_fa='وب‌سایت شخصی و نمونه کارها',
@@ -611,8 +608,6 @@ def init_db_command():
         tags_de='Business Intelligence, Datenanalyse, SaaS, Python, Flask, Chart.js',
         display_order=3
     )
-
-
     story1 = Story(title='بازآفرینی یک برند', slug='reimagining-a-brand', excerpt='چگونه یک برند قدیمی را برای نسل جدید بازطراحی کردیم؟', content='متن کامل داستان...', image_file='story-brand-reimagined.jpg', display_order=1)
     story2 = Story(title='مصاحبه با یک مینیمالیست', slug='interview-with-a-minimalist', excerpt='گفتگویی با «سارا اکبری»، طراح UI.', content='متن کامل داستان...', image_file='story-minimalist-designer.jpg', display_order=2)
 
@@ -630,7 +625,7 @@ admin.add_view(AdminView(Story, db.session))
 @app.context_processor
 def inject_shared_data():
     lang = request.view_args.get('lang', 'fa') if request.view_args else 'fa'
-    session['lang'] = lang # Store lang in session for API routes
+    session['lang'] = lang
     try:
         latest_posts = []
         if db.engine.dialect.has_table(db.engine.connect(), "post"):
@@ -643,45 +638,38 @@ def inject_shared_data():
     except Exception:
         return dict(latest_footer_posts=[], translations=translations, lang=lang)
 
-# --- Routes (UPDATED) ---
+# --- Routes ---
 @app.route('/')
 def index():
     return redirect(url_for('home', lang='fa'))
 
 @app.route('/sitemap.xml')
 def sitemap():
-    """Route for generating sitemap.xml."""
     pages = []
-    
-    # Base URLs for static pages
     static_pages = ['home', 'about', 'projects', 'blog', 'stories', 'ai_assistant', 'contact', 'resume_pro']
     for lang in ['fa', 'en', 'ar', 'de']:
         for page in static_pages:
             pages.append(url_for(page, lang=lang, _external=True))
-
-    # URLs for blog posts
     posts = Post.query.order_by(Post.pub_date.desc()).all()
     for lang in ['fa', 'en', 'ar', 'de']:
         for post in posts:
             pages.append(url_for('post_detail', lang=lang, slug=post.slug, _external=True))
-            
-    # URLs for project details
     projects_with_details = Project.query.filter(Project.project_url == None).all()
     for lang in ['fa', 'en', 'ar', 'de']:
         for project in projects_with_details:
             pages.append(url_for('project_detail', lang=lang, slug=project.slug, _external=True))
-
     sitemap_xml = render_template('sitemap.xml', pages=pages)
     response = make_response(sitemap_xml)
     response.headers["Content-Type"] = "application/xml"
-    
     return response
 
 @app.route('/<lang>/')
 def home(lang):
     if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-    try: latest_posts = Post.query.order_by(Post.pub_date.desc()).limit(2).all()
-    except: latest_posts = []
+    try:
+        latest_posts = Post.query.order_by(Post.pub_date.desc()).limit(2).all()
+    except:
+        latest_posts = []
     return render_template('index.html', latest_posts=latest_posts)
 
 @app.route('/<lang>/about')
@@ -692,8 +680,10 @@ def about(lang):
 @app.route('/<lang>/projects')
 def projects(lang):
     if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-    try: all_projects = Project.query.order_by(Project.display_order).all()
-    except: all_projects = []
+    try:
+        all_projects = Project.query.order_by(Project.display_order).all()
+    except:
+        all_projects = []
     return render_template('projects.html', projects=all_projects)
 
 @app.route('/<lang>/project/<string:slug>')
@@ -706,7 +696,7 @@ def project_detail(lang, slug):
         else:
             return redirect(url_for('projects', lang=lang))
     return render_template('project_detail.html', project=project)
-    
+
 @app.route('/<lang>/resume-pro')
 def resume_pro(lang):
     if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
@@ -728,8 +718,10 @@ def blog(lang):
 @app.route('/<lang>/stories')
 def stories(lang):
     if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-    try: all_stories = Story.query.order_by(Story.display_order).all()
-    except: all_stories = []
+    try:
+        all_stories = Story.query.order_by(Story.display_order).all()
+    except:
+        all_stories = []
     return render_template('stories.html', stories=all_stories)
 
 @app.route('/<lang>/blog/<string:slug>')
@@ -800,13 +792,12 @@ def ask_api():
         error_lang = session.get('lang', 'fa')
         error_message = translations.get(error_lang, {}).get('js_ai_error', 'An API error occurred.')
         return jsonify({'text': error_message}), 500
-        
+
 # --- Login/Logout for Admin ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # NOTE: In a real app, use a proper user database and hashed passwords!
-        if request.form.get('username') == 'admin' and request.form.get('password') == 'your_strong_password':
+        if request.form.get('username') == 'admin' and request.form.get('password') == 'Alhambra1C%%%%$':
             session['user'] = 'admin'
             return redirect('/admin')
         else:
