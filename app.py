@@ -616,7 +616,7 @@ def init_db_command():
     print("Database has been initialized and seeded successfully with the new SEO post.")
 
 # --- ADMIN PANEL SETUP ---
-admin = Admin(app, name='MiGallery Admin', template_mode='bootstrap3')
+admin = Admin(app, name='MiGallery Admin v2', template_mode='bootstrap3')
 admin.add_view(AdminView(Post, db.session))
 admin.add_view(AdminView(Project, db.session))
 admin.add_view(AdminView(Story, db.session))
