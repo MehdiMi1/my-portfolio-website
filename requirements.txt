@@ -4,3 +4,6 @@ markdown
 click
 google-generativeai
 Flask-Admin
+Flask-Login
+Werkzeug
+gunicorn
