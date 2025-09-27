@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
 {% set t = translations[lang] %}
 
-{% block title %}
-    {% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %} | Mi Design
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block json_ld %}
+    {% if json_ld_data %}
+    <script type="application/ld+json">
+        {{ json_ld_data|safe }}
+    </script>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -15,11 +22,11 @@
                 <h1 class="reveal-on-scroll" style="transition-delay: 0.2s;">{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}</h1>
                 <div class="post-meta-detail reveal-on-scroll" style="transition-delay: 0.4s;">
                     <span>
-                        <i class="fa-solid fa-user"></i> 
+                        <i class="fa-solid fa-user"></i>
                         {{ t.post_written_by }}
                     </span>
                     <span>
-                        <i class="fa-solid fa-calendar-days"></i> 
+                        <i class="fa-solid fa-calendar-days"></i>
                         {{ post.pub_date.strftime('%Y/%m/%d') }}
                     </span>
                 </div>
@@ -28,22 +35,59 @@
     </header>
 
     <div class="post-main-content-wrapper">
-        <div class="container">
+        <div class="container" style="max-width: 800px; margin: 0 auto;">
             <article class="post-body">
                 {% set content = post.content_fa if lang == 'fa' else post.content_en if lang == 'en' else post.content_ar if lang == 'ar' else post.content_de %}
                 {{ (content or '') | markdown | safe }}
             </article>
+
+            <div class="share-buttons-wrapper">
+                <h4>{% if lang == 'fa' %}این مقاله را به اشتراک بگذارید:{% else %}Share this article:{% endif %}</h4>
+                <div class="share-buttons">
+                    {% set share_title = post.title_fa if lang == 'fa' else post.title_en %}
+                    <a href="https://t.me/share/url?url={{ request.url }}&text={{ share_title }}" target="_blank" class="share-btn telegram" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://api.whatsapp.com/send?text={{ share_title }} {{ request.url }}" target="_blank" class="share-btn whatsapp" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ share_title }}" target="_blank" class="share-btn twitter" aria-label="Share on Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.url }}&title={{ share_title }}" target="_blank" class="share-btn linkedin" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                </div>
+            </div>
         </div>
     </div>
+</section>
 
-    <section class="back-link-section">
-        <div class="container">
-            <a href="{{ url_for('blog', lang=lang) }}" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-right"></i> 
-                {{ t.post_back_to_articles }}
-            </a>
+{% if related_posts %}
+<section class="latest-blog-section" style="background-color: var(--secondary-surface);">
+    <div class="container">
+        <h2 class="section-title reveal-on-scroll">{% if lang == 'fa' %}مقالات مرتبط{% else %}Related Articles{% endif %}</h2>
+        <div class="blog-grid-preview">
+            {% for rel_post in related_posts %}
+            <div class="post-card reveal-on-scroll">
+                <a href="{{ url_for('post_detail', lang=lang, slug=rel_post.slug) }}" class="post-image-link">
+                    <img src="{{ url_for('static', filename='images/blog/' + rel_post.image_file) if rel_post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ rel_post.title_fa }}{% elif lang == 'en' %}{{ rel_post.title_en }}{% elif lang == 'ar' %}{{ rel_post.title_ar }}{% else %}{{ rel_post.title_de }}{% endif %}">
+                </a>
+                <div class="post-content">
+                    <span class="post-category">{% if lang == 'fa' %}{{ rel_post.category_fa }}{% elif lang == 'en' %}{{ rel_post.category_en }}{% elif lang == 'ar' %}{{ rel_post.category_ar }}{% else %}{{ rel_post.category_de }}{% endif %}</span>
+                    <h3><a href="{{ url_for('post_detail', lang=lang, slug=rel_post.slug) }}">{% if lang == 'fa' %}{{ rel_post.title_fa }}{% elif lang == 'en' %}{{ rel_post.title_en }}{% elif lang == 'ar' %}{{ rel_post.title_ar }}{% else %}{{ rel_post.title_de }}{% endif %}</a></h3>
+                    {% set content_preview = rel_post.content_fa if lang == 'fa' else rel_post.content_en %}
+                    <p>{{ (content_preview or '') | striptags | truncate(100) }}</p>
+                    <a href="{{ url_for('post_detail', lang=lang, slug=rel_post.slug) }}" class="read-more">
+                        {{ t.blog_read_more }}
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-    </section>
+    </div>
+</section>
+{% endif %}
 
+<section class="back-link-section">
+    <div class="container">
+        <a href="{{ url_for('blog', lang=lang) }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-right"></i>
+            {{ t.post_back_to_articles }}
+        </a>
+    </div>
 </section>
 {% endblock %}

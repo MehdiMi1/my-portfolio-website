@@ -7,21 +7,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ t.default_title_tag }}{% endblock %}</title>
+
+    <title>{{ meta_title|default(t.default_title_tag) }}</title>
+    <meta name="description" content="{{ meta_description|default(t.meta_desc_home) }}">
+
+    <link rel="canonical" href="{{ request.url }}">
+    
+    {% if hreflang_tags %}
+        {% for lang_code, url in hreflang_tags.items() %}
+            <link rel="alternate" hreflang="{{ lang_code }}" href="{{ url }}">
+        {% endfor %}
+    {% endif %}
+
+    {% if keywords %}
+    <meta name="keywords" content="{{ keywords|join(', ') }}">
+    {% endif %}
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ og_url|default(request.url) }}">
+    <meta property="og:title" content="{{ og_title|default(meta_title) }}">
+    <meta property="og:description" content="{{ og_description|default(meta_description) }}">
+    <meta property="og:image" content="{{ og_image|default(url_for('static', filename='images/hero-collaborative-tech-team.jpg', _external=True)) }}">
+    <meta property="og:site_name" content="Mi Design">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ og_url|default(request.url) }}">
+    <meta name="twitter:title" content="{{ og_title|default(meta_title) }}">
+    <meta name="twitter:description" content="{{ og_description|default(meta_description) }}">
+    <meta name="twitter:image" content="{{ og_image|default(url_for('static', filename='images/hero-collaborative-tech-team.jpg', _external=True)) }}">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Mi Design",
+      "url": "{{ url_for('home', lang='fa', _external=True) }}",
+      "logo": "{{ url_for('static', filename='images/logo.png', _external=True) }}"
+    }
+    </script>
+    {% if json_ld_data %}
+    <script type="application/ld+json">
+        {{ json_ld_data|safe }}
+    </script>
+    {% endif %}
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVPHWBGBT8"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-ZVPHWBGBT8');
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
-        // Pass translations and current language to JavaScript
         window.translations = {{ translations | tojson }};
         window.currentLang = "{{ lang }}";
     </script>
@@ -73,8 +113,8 @@
                             <svg class="flag-icon" viewBox="0 0 60 30"><clipPath id="a"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="b"><path d="M30 15h30v15zv15h30zM0 15h30V0h-30z"/></clipPath><g clip-path="url(#a)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#b)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>
                             <span>English (EN)</span>
                         </a>
-                        <a href="{{ url_for(request.endpoint, lang='ar', **view_args) }}" class="lang-option">
-                             <svg class="flag-icon" viewBox="0 0 18 12"><path fill="#007A3D" d="M0 0h18v12H0z"/><path fill="#FFF" d="M0 4h18v4H0z"/><path fill="#000" d="M0 8h18v4H0z"/><path d="M0 0l7 6-7 6V0z" fill="#CE1126"/></svg>
+                         <a href="{{ url_for(request.endpoint, lang='ar', **view_args) }}" class="lang-option">
+                            <svg class="flag-icon" viewBox="0 0 18 12"><path fill="#007A3D" d="M0 0h18v12H0z"/><path fill="#FFF" d="M0 4h18v4H0z"/><path fill="#000" d="M0 8h18v4H0z"/><path d="M0 0l7 6-7 6V0z" fill="#CE1126"/></svg>
                             <span>العربية (AR)</span>
                         </a>
                          <a href="{{ url_for(request.endpoint, lang='de', **view_args) }}" class="lang-option">
@@ -91,6 +131,21 @@
             </div>
         </nav>
     </header>
+
+    {% if active_news %}
+    <div class="news-ticker">
+        <div class="news-ticker-content">
+            {% for news_item in active_news * 2 %} {# Loop twice for seamless scroll #}
+                <div class="news-item">
+                    <span class="news-badge">{% if lang == 'fa' %}خبر روز{% else %}News{% endif %}</span>
+                    <a href="{{ news_item.link if news_item.link != '#' else '#' }}">
+                        {{ news_item.content_fa if lang == 'fa' else news_item.content_en }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     <div class="mobile-nav" id="mobile-nav">
         <ul class="nav-links">
@@ -118,9 +173,9 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col footer-about">
-                    <a href="{{ url_for('home', lang=lang) }}" class="logo">
+                     <a href="{{ url_for('home', lang=lang) }}" class="logo">
                         <span>Mi Design</span>
-                    </a>
+                     </a>
                     <p class="footer-description">{{ t.footer_description }}</p>
                     <div class="social-icons">
                          <a href="https://t.me/Mehdi_Mirzaee1" target="_blank" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
@@ -140,8 +195,8 @@
                 <div class="footer-col footer-contact">
                     <h3>{{ t.footer_contact_me }}</h3>
                     <ul>
-                        <li><a href="mailto:Mehdimirzaee1999.iran@gmail.com"><i class="fa-solid fa-envelope"></i> Mehdimirzaee1999.iran@gmail.com</a></li>
-                        <li><a href="tel:+989901798689"><i class="fa-solid fa-phone"></i> 0990 179 8689</a></li>
+                        <li><a href="mailto:{{ site_content_data.get('contact_email_info') }}"><i class="fa-solid fa-envelope"></i> {{ site_content_data.get('contact_email_info') }}</a></li>
+                        <li><a href="tel:{{ site_content_data.get('contact_phone_info') }}"><i class="fa-solid fa-phone"></i> {{ site_content_data.get('contact_phone_info') }}</a></li>
                         <li><a href="{{ url_for('contact', lang=lang) }}" class="contact-button">{{ t.footer_send_message }}</a></li>
                     </ul>
                 </div>
@@ -168,7 +223,6 @@
     </footer>
 
     <a href="#" class="back-to-top-btn" id="back-to-top" aria-label="Go to top"><i class="fa-solid fa-arrow-up"></i></a>
-    <div class="page-transition-overlay"></div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

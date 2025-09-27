@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
 {% set t = translations[lang] %}
 
-{% block title %}{{ t.nav_home }} | Mi Design{% endblock %}
-
-{% block meta_description %}
-{{ t.meta_desc_home }}
-{% endblock %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
 
 {% block content %}
     <section class="hero">
@@ -46,6 +43,32 @@
             </div>
         </div>
     </section>
+    
+    {% if featured_project %}
+    <section class="featured-project-section">
+        <div class="container">
+            <h2 class="section-title reveal-on-scroll">{% if lang == 'fa' %}پروژه منتخب{% else %}Featured Project{% endif %}</h2>
+            <div class="project-card-featured reveal-on-scroll">
+                <div class="project-image">
+                    <img src="{{ url_for('static', filename='images/projects/' + featured_project.image_file) if featured_project.image_file else '' }}" alt="{% if lang == 'fa' %}{{ featured_project.title_fa }}{% else %}{{ featured_project.title_en }}{% endif %}">
+                </div>
+                <div class="project-content">
+                    <h3>{% if lang == 'fa' %}{{ featured_project.title_fa }}{% elif lang == 'en' %}{{ featured_project.title_en }}{% elif lang == 'ar' %}{{ featured_project.title_ar }}{% else %}{{ featured_project.title_de }}{% endif %}</h3>
+                    <p>{% if lang == 'fa' %}{{ featured_project.description_fa }}{% elif lang == 'en' %}{{ featured_project.description_en }}{% elif lang == 'ar' %}{{ featured_project.description_ar }}{% else %}{{ featured_project.description_de }}{% endif %}</p>
+                    {% set tags = featured_project.tags_fa if lang == 'fa' else featured_project.tags_en if lang == 'en' else featured_project.tags_ar if lang == 'ar' else featured_project.tags_de %}
+                    {% if tags %}
+                    <div class="project-tags">
+                        {% for tag in tags.split(',') %}
+                            <span>{{ tag.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <a href="{{ url_for('project_detail', lang=lang, slug=featured_project.slug) }}" class="btn btn-secondary">{% if lang == 'fa' %}مشاهده جزئیات پروژه{% else %}View Project Details{% endif %}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     <section class="process-section">
       <div class="container">
@@ -83,31 +106,6 @@
             </div>
         </div>
       </div>
-    </section>
-
-    <section class="cta-spotlight-section">
-        <div class="container">
-            <div class="cta-spotlight-content reveal-on-scroll">
-                {% if lang == 'fa' %}
-                    <h2 class="section-title">بیایید یک شاهکار خلق کنیم</h2>
-                    <p>چه یک وب‌سایت شخصی برای نمایش هنرتان بخواهید، چه یک فروشگاه آنلاین قدرتمند یا یک اپلیکیشن تحت وب پیچیده، من اینجا هستم تا ایده‌های شما را به واقعیت دیجیتال تبدیل کنم.</p>
-                {% elif lang == 'en' %}
-                    <h2 class="section-title">Let's Create a Masterpiece</h2>
-                    <p>Whether you need a personal website to showcase your art, a powerful e-commerce store, or a complex web application, I'm here to turn your ideas into digital reality.</p>
-                {% else %}
-                    <h2 class="section-title">لنصنع تحفة فنية</h2>
-                    <p>سواء كنت تحتاج إلى موقع شخصي لعرض فنك، أو متجر إلكتروني قوي، أو تطبيق ويب معقد، أنا هنا لتحويل أفكارك إلى حقيقة رقمية.</p>
-                {% endif %}
-                
-                <ul class="project-types-list">
-                    <li><i class="fa-solid fa-user-tie"></i> <span>{% if lang == 'fa' %}سایت‌های شخصی و پورتفولیو{% else %}Personal & Portfolio Sites{% endif %}</span></li>
-                    <li><i class="fa-solid fa-store"></i> <span>{% if lang == 'fa' %}فروشگاه‌های آنلاین{% else %}E-commerce Stores{% endif %}</span></li>
-                    <li><i class="fa-solid fa-building"></i> <span>{% if lang == 'fa' %}وب‌سایت‌های شرکتی{% else %}Corporate Websites{% endif %}</span></li>
-                    <li><i class="fa-solid fa-mobile-screen-button"></i> <span>{% if lang == 'fa' %}اپلیکیشن‌های تحت وب{% else %}Web Applications{% endif %}</span></li>
-                </ul>
-                <a href="{{ url_for('contact', lang=lang) }}" class="btn btn-primary">{{ t.final_cta_button }} <i class="fa-solid fa-arrow-left"></i></a>
-            </div>
-        </div>
     </section>
 
     <section class="latest-blog-section">

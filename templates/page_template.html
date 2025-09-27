@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ page['title_' + lang] }}</h1>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container" style="max-width: 800px; text-align: center;">
+        <article class="post-body reveal-on-scroll">
+            {{ page['content_' + lang] | markdown | safe }}
+        </article>
+    </div>
+</section>
+{% endblock %}

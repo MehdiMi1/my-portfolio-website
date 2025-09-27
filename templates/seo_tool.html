@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">
+            {% if lang == 'fa' %}ابزار رایگان تولید تگ سئو{% else %}Free SEO Meta Tag Generator{% endif %}
+        </h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">
+            {% if lang == 'fa' %}عنوان و توضیحات خود را وارد کنید و پیش‌نمایش زنده آن را در گوگل ببینید.{% else %}Enter your title and description and see a live preview of how it looks on Google.{% endif %}
+        </p>
+    </div>
+</section>
+
+<section class="features" style="padding-top: 80px; padding-bottom: 80px;">
+    <div class="container" style="max-width: 1200px;">
+        <div class="tool-grid">
+            <div class="tool-input-panel reveal-on-scroll">
+                <h3 class="panel-title">{% if lang == 'fa' %}۱. اطلاعات خود را وارد کنید{% else %}1. Enter Your Information{% endif %}</h3>
+                <div class="form-group">
+                    <label for="seo-title">{% if lang == 'fa' %}تگ عنوان (Title Tag){% else %}Title Tag{% endif %}</label>
+                    <input type="text" id="seo-title" placeholder="{% if lang == 'fa' %}مثال: طراحی سایت حرفه‌ای با پایتون | Mi Design{% else %}Example: Professional Web Design with Python | Mi Design{% endif %}">
+                    <div class="char-counter" id="title-counter">0 / 60</div>
+                </div>
+                <div class="form-group">
+                    <label for="seo-desc">{% if lang == 'fa' %}توضیحات متا (Meta Description){% else %}Meta Description{% endif %}</label>
+                    <textarea id="seo-desc" rows="5" placeholder="{% if lang == 'fa' %}توضیحاتی جذاب و کوتاه در مورد صفحه خود بنویسید تا کاربران را به کلیک کردن ترغیب کنید...{% else %}Write a compelling, short description about your page to encourage users to click...{% endif %}"></textarea>
+                    <div class="char-counter" id="desc-counter">0 / 160</div>
+                </div>
+            </div>
+            <div class="tool-preview-panel reveal-on-scroll" style="transition-delay: 0.2s;">
+                <h3 class="panel-title">{% if lang == 'fa' %}۲. پیش‌نمایش زنده در گوگل{% else %}2. Live Google Preview{% endif %}</h3>
+                <div class="google-preview">
+                    <div class="preview-url">https://www.migallerydesign.com/{% if lang == 'fa' %}fa/blog/your-post-title{% else %}en/blog/your-post-title{% endif %}</div>
+                    <h3 class="preview-title" id="preview-title">{% if lang == 'fa' %}عنوان شما در اینجا نمایش داده می‌شود{% else %}Your Title Will Be Displayed Here{% endif %}</h3>
+                    <p class="preview-desc" id="preview-desc">{% if lang == 'fa' %}توضیحات متای شما پس از وارد کردن در کادر مربوطه، در این قسمت نمایش داده خواهد شد تا بتوانید بهترین متن را برای جذب کاربر انتخاب کنید.{% else %}Your meta description will be shown in this area after you type it in the box above. This helps you choose the best text to attract users.{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

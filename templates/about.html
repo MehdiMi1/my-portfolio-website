@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
 {% set t = translations[lang] %}
 
-{% block title %}{{ t.about_page_title }} | Mi Design{% endblock %}
-
-{% block meta_description %}
-{{ t.meta_desc_about }}
-{% endblock %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
 
 {% block content %}
 <section class="page-header">
@@ -19,12 +16,12 @@
     <div class="container">
         <div class="about-grid">
             <div class="about-image reveal-on-scroll">
-                <img src="{{ url_for('static', filename='images/about-creative-brainstorm-session.jpg') }}" alt="فضای داخلی یک دفتر طراحی">
+                <img src="{{ url_for('static', filename='images/about-creative-brainstorm-session.jpg') }}" alt="{% if lang == 'fa' %}فضای داخلی یک دفتر طراحی خلاق{% else %}Creative design office interior{% endif %}">
             </div>
             <div class="about-text reveal-on-scroll" style="transition-delay: 0.3s;">
                 <h2>{{ t.about_philosophy_title }}</h2>
-                <p>{{ t.about_philosophy_p1 }}</p>
-                <p>{{ t.about_philosophy_p2 }}</p>
+                <p>{{ page_content.philosophy_p1 }}</p>
+                <p>{{ page_content.philosophy_p2 }}</p>
             </div>
         </div>
     </div>
@@ -46,7 +43,7 @@
                         خارج از دنیای دیجیتال، به عنوان یک گیتاریست، خلاقیت را در موسیقی جستجو می‌کنم و به عنوان یک تریدر، با نگاهی استراتژیک و تحلیلی، نبض بازارهای نوین را دنبال می‌کنم. این ترکیب منحصربه‌فرد از هنر، علم و تکنولوژی، به من اجازه می‌دهد تا برای هر چالش، راه‌حلی خلاقانه و هوشمندانه پیدا کنم.
                     </p>
                 {% elif lang == 'en' %}
-                     <p class="founder-description">
+                    <p class="founder-description">
                         I am a developer and web designer who bridges the logical world of code with a deep understanding of human psychology. Studying for a Master's degree in Psychology has equipped me to create products that are not only beautiful and functional but also deeply aligned with user needs.
                     </p>
                     <p class="founder-description">
@@ -69,8 +66,56 @@
             </div>
             <div class="founder-visual reveal-on-scroll" style="transition-delay: 0.3s;">
                 <div class="founder-image-placeholder">
-                    <i class="fa-solid fa-user-astronaut"></i>
+                    <svg class="anime-astronaut" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="helmet-gradient" cx="50%" cy="30%" r="70%">
+                                <stop offset="0%" style="stop-color:#4a4a52;" />
+                                <stop offset="100%" style="stop-color:#2c2c34;" />
+                            </radialGradient>
+                            <linearGradient id="visor-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color: rgba(106, 90, 205, 0.6);" />
+                                <stop offset="50%" style="stop-color: rgba(106, 90, 205, 0.3);" />
+                                <stop offset="100%" style="stop-color: rgba(255, 215, 0, 0.4);" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <circle cx="100" cy="100" r="90" fill="url(#helmet-gradient)" class="helmet-base" />
+                        
+                        <path d="M 40 120 Q 100 160, 160 120 L 160 80 Q 100 50, 40 80 Z" fill="url(#visor-gradient)" class="visor" />
+                        
+                        <path d="M 50 115 Q 100 145, 150 115 L 150 90 Q 100 70, 50 90 Z" fill="#1E1E1E" opacity="0.5" />
+
+                        <ellipse cx="75" cy="100" rx="10" ry="14" fill="#E0E0E0" class="eye" />
+                        <ellipse cx="125" cy="100" rx="10" ry="14" fill="#E0E0E0" class="eye" />
+                        <circle cx="77" cy="95" r="3" fill="#FFFFFF" class="eye-highlight" />
+                        <circle cx="127" cy="95" r="3" fill="#FFFFFF" class="eye-highlight" />
+
+                        <circle cx="100" cy="20" r="5" fill="#FFD700" class="helmet-light" />
+                        <path d="M 20 90 L 30 90 M 170 90 L 180 90" stroke="#6A5ACD" stroke-width="4" stroke-linecap="round" />
+                    </svg>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item reveal-on-scroll">
+                <i class="fa-solid fa-mug-hot"></i>
+                <div class="stat-number" data-target="1500">0</div>
+                <div class="stat-label">{% if lang == 'fa' %}فنجان قهوه{% else %}Cups of Coffee{% endif %}</div>
+            </div>
+            <div class="stat-item reveal-on-scroll" style="transition-delay: 0.2s;">
+                <i class="fa-solid fa-code"></i>
+                <div class="stat-number" data-target="950000">0</div>
+                <div class="stat-label">{% if lang == 'fa' %}خط کد{% else %}Lines of Code{% endif %}</div>
+            </div>
+            <div class="stat-item reveal-on-scroll" style="transition-delay: 0.4s;">
+                <i class="fa-solid fa-rocket"></i>
+                <div class="stat-number" data-target="35">0</div>
+                <div class="stat-label">{% if lang == 'fa' %}پروژه موفق{% else %}Successful Projects{% endif %}</div>
             </div>
         </div>
     </div>
@@ -95,7 +140,7 @@
                     <h3>طراحی کاربر-محور</h3>
                     <p>استفاده از اصول روانشناسی برای ساختن تجربه‌هایی که برای انسان‌ها طراحی شده، نه فقط برای ماشین‌ها.</p>
                 {% else %}
-                     <h3>User-Centric Design</h3>
+                    <h3>User-Centric Design</h3>
                     <p>Applying psychological principles to build experiences designed for humans, not just for machines.</p>
                 {% endif %}
             </div>
@@ -112,7 +157,6 @@
         </div>
     </div>
 </section>
-
 
 <section class="skills-section">
     <div class="container">
@@ -145,5 +189,4 @@
         </div>
     </div>
 </section>
-
 {% endblock %}

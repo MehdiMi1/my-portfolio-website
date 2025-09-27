@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% set t = translations[lang] %}
 
-{% block title %}
-    {{ t.stories_page_title }} | Mi Design
-{% endblock %}
+{% block title %}{{ meta_title }}{% endblock %}
+
+{% block meta_description %}{{ meta_description }}{% endblock %}
 
 {% block content %}
 <section class="page-header">
@@ -13,18 +13,22 @@
     </div>
 </section>
 
-<section class="stories-intro-section">
+<section class="features" style="padding: 60px 0 0 0; background-color: var(--bg-dark);">
     <div class="container">
-        <div class="stories-intro-content reveal-on-scroll">
-            <h2>{{ t.stories_intro_title }}</h2>
-            <p>{{ t.stories_intro_desc }}</p>
+        <div class="blog-filters reveal-on-scroll" id="story-filters">
+            <button class="filter-btn active" data-filter="all">
+                {{ t.blog_all_categories }}
+            </button>
+            {% for category in categories %}
+            <button class="filter-btn" data-filter="{{ category }}">{{ category }}</button>
+            {% endfor %}
         </div>
     </div>
 </section>
 
 <div class="stories-container">
     {% for story in stories %}
-    <section class="story-parallax-item">
+    <section class="story-parallax-item" data-category="{{ story.category_fa if lang == 'fa' else story.category_en }}">
         <div class="parallax-bg" style="background-image: url('{{ url_for('static', filename='images/stories/' + story.image_file) if story.image_file else '' }}');"></div>
         <div class="story-content container">
             <h2 class="story-title">{{ story.title }}</h2>

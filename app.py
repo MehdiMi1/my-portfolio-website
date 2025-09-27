@@ -1,17 +1,17 @@
 import os
 import json
 import datetime
-import click
-import google.generativeai as genai
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, make_response, flash
+from flask import Flask, render_template, request, redirect, url_for, session, make_response, Response
 from flask_sqlalchemy import SQLAlchemy
 from markdown import markdown
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from markupsafe import Markup
+from sqlalchemy import desc
 
-# --- 1. INITIALIZE EXTENSIONS (Global Scope) ---
+# --- 1. INITIALIZE EXTENSIONS ---
 db = SQLAlchemy()
 admin = Admin(name='MiGallery Admin', template_mode='bootstrap3')
 login_manager = LoginManager()
@@ -27,6 +27,11 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class SiteContent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(100), unique=True, nullable=False)
+    value = db.Column(db.Text, nullable=True)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -78,100 +83,128 @@ class Story(db.Model):
     image_file = db.Column(db.String(100), nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     display_order = db.Column(db.Integer, default=100)
+    category_fa = db.Column(db.String(50), nullable=True)
+    category_en = db.Column(db.String(50), nullable=True)
 
-# --- 3. SECURE ADMIN VIEW & LOGIN MANAGER ---
+class News(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content_fa = db.Column(db.String(250), nullable=False)
+    content_en = db.Column(db.String(250), nullable=False)
+    link = db.Column(db.String(250), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    pub_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+
+# --- 3. ADMIN & LOGIN ---
 class AdminView(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
 
+class SiteContentView(AdminView):
+    form_columns = ['key', 'value']
+    column_list = ['key', 'value']
+    column_searchable_list = ['key', 'value']
+    column_editable_list = ['value']
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- 4. APPLICATION FACTORY FUNCTION ---
+# --- 4. APP FACTORY ---
 def create_app():
     app = Flask(__name__)
     basedir = os.path.abspath(os.path.dirname(__file__))
-
-    # --- Config ---
-    app.config['SECRET_KEY'] = 'a-very-secret-key-that-you-should-change-for-sessions'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'blog.db')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    # --- Initialize extensions with the app ---
+    app.config.from_mapping(
+        SECRET_KEY='a-very-secret-key-that-you-should-change-for-sessions',
+        SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(basedir, 'blog.db'),
+        SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        FLASK_ADMIN_SWATCH='cerulean'
+    )
     db.init_app(app)
     admin.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'login'
-    
-    # --- This context ensures the app is fully set up before we add views or commands ---
+
     with app.app_context():
-        # --- Add admin views with unique names ---
-        admin.add_view(AdminView(User, db.session))
-        admin.add_view(AdminView(Post, db.session, name='Blog Posts'))
-        admin.add_view(AdminView(Project, db.session, name='My Projects'))
-        admin.add_view(AdminView(Story, db.session, name='Stories'))
+        admin.add_view(AdminView(User, db.session, name='کاربران'))
+        admin.add_view(AdminView(Post, db.session, name='پست‌های بلاگ'))
+        admin.add_view(AdminView(Project, db.session, name='پروژه‌ها'))
+        admin.add_view(AdminView(Story, db.session, name='داستان‌ها'))
+        admin.add_view(AdminView(News, db.session, name='اخبار روز'))
+        admin.add_view(SiteContentView(SiteContent, db.session, name='مدیریت محتوای صفحات'))
 
-        # --- Import API Key from config.py ---
-        try:
-            from config import API_KEY
-            GOOGLE_API_KEY = API_KEY
-        except ImportError:
-            GOOGLE_API_KEY = None
+        with open(os.path.join(basedir, 'translations.json'), 'r', encoding='utf-8') as f:
+            translations = json.load(f)
 
-        # --- Jinja Filter ---
-        @app.template_filter('markdown')
-        def render_markdown(text):
-            if text:
-                return markdown(text, extensions=['fenced_code', 'tables'])
-            return ''
-            
-        # --- Load Translations ---
-        try:
-            with open(os.path.join(basedir, 'translations.json'), 'r', encoding='utf-8') as f:
-                translations = json.load(f)
-        except FileNotFoundError:
-            translations = {}
-
-        # --- Context Processor ---
         @app.context_processor
         def inject_shared_data():
             lang = request.view_args.get('lang', 'fa') if request.view_args else 'fa'
-            session['lang'] = lang
-            try:
-                latest_posts = Post.query.order_by(Post.pub_date.desc()).limit(3).all()
-            except Exception:
-                latest_posts = []
-            return dict(
-                latest_footer_posts=latest_posts,
-                translations=translations,
-                lang=lang
-            )
+            latest_posts = Post.query.order_by(Post.pub_date.desc()).limit(3).all()
+            active_news = News.query.filter_by(is_active=True).order_by(desc(News.pub_date)).all()
+            site_content_values = {item.key: item.value for item in SiteContent.query.all()}
+            return dict(lang=lang, latest_footer_posts=latest_posts, translations=translations, active_news=active_news, site_content_data=site_content_values)
 
-        # --- Routes ---
+        def create_seo_data(title, description, image_filename=None, keywords=[]):
+            return {
+                "meta_title": title, "meta_description": description,
+                "og_title": title, "og_description": description,
+                "og_url": request.url,
+                "og_image": url_for('static', filename=f'images/{image_filename}' if image_filename else 'images/hero-collaborative-tech-team.jpg', _external=True),
+                "keywords": keywords
+            }
+
+        def generate_hreflang_tags(endpoint, **kwargs):
+            tags = {}
+            if 'slug' not in kwargs and request.view_args and 'slug' in request.view_args:
+                kwargs['slug'] = request.view_args['slug']
+            for lang_code in ['fa', 'en', 'ar', 'de']:
+                kwargs['lang'] = lang_code
+                tags[lang_code] = url_for(endpoint, _external=True, **kwargs)
+            return tags
+
+        @app.template_filter('markdown')
+        def render_markdown(text):
+            return Markup(markdown(text, extensions=['fenced_code', 'tables'])) if text else ''
+
+        @app.template_filter('striptags')
+        def striptags_filter(text):
+            return Markup(text).striptags()
+
+        # --- ROUTES ---
         @app.route('/')
         def index():
             return redirect(url_for('home', lang='fa'))
 
-        # ... (All your other public routes like /sitemap.xml, /<lang>/home, etc.)
-        # ... Just make sure they are inside the create_app() function
+        @app.route('/robots.txt')
+        def robots_txt():
+            sitemap_url = url_for('sitemap', _external=True)
+            return Response(f"User-agent: *\nDisallow: /admin\nDisallow: /login\n\nSitemap: {sitemap_url}", mimetype='text/plain')
+
         @app.route('/sitemap.xml')
         def sitemap():
             pages = []
-            static_pages = ['home', 'about', 'projects', 'blog', 'stories', 'ai_assistant', 'contact', 'resume_pro']
-            for lang in ['fa', 'en', 'ar', 'de']:
+            static_pages = ['home', 'about', 'projects', 'blog', 'stories', 'ai_assistant', 'contact', 'resume_pro', 'seo_tool']
+            langs = ['fa', 'en', 'ar', 'de']
+            for lang in langs:
                 for page in static_pages:
                     pages.append(url_for(page, lang=lang, _external=True))
-            posts = Post.query.order_by(Post.pub_date.desc()).all()
-            for lang in ['fa', 'en', 'ar', 'de']:
+            
+            posts = Post.query.all()
+            for lang in langs:
                 for post in posts:
                     pages.append(url_for('post_detail', lang=lang, slug=post.slug, _external=True))
-            projects_with_details = Project.query.filter(Project.project_url.is_(None)).all()
-            for lang in ['fa', 'en', 'ar', 'de']:
-                for project in projects_with_details:
+            
+            projects = Project.query.filter(Project.content_fa != None).all()
+            for lang in langs:
+                for project in projects:
                     pages.append(url_for('project_detail', lang=lang, slug=project.slug, _external=True))
+
+            stories = Story.query.all()
+            for lang in ['fa', 'en']:
+                for story in stories:
+                    pages.append(url_for('story_detail', lang=lang, slug=story.slug, _external=True))
+
             sitemap_xml = render_template('sitemap.xml', pages=pages)
             response = make_response(sitemap_xml)
             response.headers["Content-Type"] = "application/xml"
@@ -180,83 +213,132 @@ def create_app():
         @app.route('/<lang>/')
         def home(lang):
             if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            try:
-                latest_posts = Post.query.order_by(Post.pub_date.desc()).limit(2).all()
-            except:
-                latest_posts = []
-            return render_template('index.html', latest_posts=latest_posts)
+            t = translations[lang]
+            seo_data = create_seo_data(f"{t['nav_home']} | {t['default_title_tag']}", t['meta_desc_home'])
+            latest_posts = Post.query.order_by(Post.pub_date.desc()).limit(2).all()
+            featured_project = Project.query.order_by(Project.display_order).first()
+            hreflang_tags = generate_hreflang_tags('home')
+            return render_template('index.html', latest_posts=latest_posts, featured_project=featured_project, hreflang_tags=hreflang_tags, **seo_data)
+
+        @app.route('/<lang>/seo-tag-generator')
+        def seo_tool(lang):
+            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
+            t = translations[lang]
+            title = "ابزار رایگان تولید تگ سئو" if lang == 'fa' else "Free SEO Meta Tag Generator"
+            description = "با ابزار رایگان ما، تگ‌های عنوان و توضیحات متای بهینه برای سایت خود بسازید و پیش‌نمایش آن را در گوگل ببینید."
+            seo_data = create_seo_data(f"{title} | {t['default_title_tag']}", description)
+            hreflang_tags = generate_hreflang_tags('seo_tool')
+            return render_template('seo_tool.html', hreflang_tags=hreflang_tags, **seo_data)
 
         @app.route('/<lang>/about')
         def about(lang):
             if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            return render_template('about.html')
-
-        @app.route('/<lang>/projects')
-        def projects(lang):
-            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            try:
-                all_projects = Project.query.order_by(Project.display_order).all()
-            except:
-                all_projects = []
-            return render_template('projects.html', projects=all_projects)
-
-        @app.route('/<lang>/project/<string:slug>')
-        def project_detail(lang, slug):
-            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            project = Project.query.filter_by(slug=slug).first_or_404()
-            if not project.content_fa and not project.content_en:
-                if project.project_url: return redirect(project.project_url)
-                else: return redirect(url_for('projects', lang=lang))
-            return render_template('project_detail.html', project=project)
-
-        @app.route('/<lang>/resume-pro')
-        def resume_pro(lang):
-            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            return render_template('resume_pro.html')
+            t = translations[lang]
+            page_content = {item.key.replace('about_', '', 1).replace(f'_{lang}', ''): item.value for item in SiteContent.query.filter(SiteContent.key.like(f"about_%_{lang}")).all()}
+            seo_data = create_seo_data(f"{t['about_page_title']} | {t['default_title_tag']}", t['meta_desc_about'], 'about-creative-brainstorm-session.jpg')
+            hreflang_tags = generate_hreflang_tags('about')
+            return render_template('about.html', page_content=page_content, hreflang_tags=hreflang_tags, **seo_data)
 
         @app.route('/<lang>/blog')
         def blog(lang):
             if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            try:
-                category_lang_field = getattr(Post, f'category_{lang}')
-                categories_query = db.session.query(category_lang_field).distinct().all()
-                unique_categories = [c[0] for c in categories_query]
-                posts = Post.query.order_by(Post.pub_date.desc()).all()
-            except Exception as e:
-                print(e)
-                unique_categories, posts = [], []
-            return render_template('blog.html', posts=posts, categories=unique_categories)
-
-        @app.route('/<lang>/stories')
-        def stories(lang):
-            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            try:
-                all_stories = Story.query.order_by(Story.display_order).all()
-            except:
-                all_stories = []
-            return render_template('stories.html', stories=all_stories)
+            t = translations[lang]
+            posts = Post.query.order_by(desc(Post.pub_date)).all()
+            category_lang_field = getattr(Post, f'category_{lang}')
+            categories_query = db.session.query(category_lang_field).distinct().all()
+            unique_categories = [c[0] for c in categories_query if c[0]]
+            seo_data = create_seo_data(f"{t['blog_page_title']} | {t['default_title_tag']}", t['blog_header_subtitle'])
+            hreflang_tags = generate_hreflang_tags('blog')
+            return render_template('blog.html', posts=posts, categories=unique_categories, hreflang_tags=hreflang_tags, **seo_data)
 
         @app.route('/<lang>/blog/<string:slug>')
         def post_detail(lang, slug):
             if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
             post = Post.query.filter_by(slug=slug).first_or_404()
-            return render_template('post_detail.html', post=post)
+            t = translations[lang]
+            title = getattr(post, f'title_{lang}')
+            content_md = getattr(post, f'content_{lang}')
+            plain_content = ' '.join(Markup(markdown(content_md)).striptags().split())
+            seo_data = create_seo_data(f"{title} | {t['blog_page_title']}", plain_content[:160], f'blog/{post.image_file}', keywords=[getattr(post, f'category_{lang}'), t['nav_blog']] + title.split())
+            json_ld_data = {
+                "@context": "https://schema.org", "@type": "BlogPosting", "headline": title,
+                "description": seo_data['meta_description'], "image": seo_data['og_image'],
+                "datePublished": post.pub_date.isoformat(),
+                "author": {"@type": "Person", "name": t['blog_author_name']}
+            }
+            related_posts = Post.query.filter(getattr(Post, f'category_{lang}') == getattr(post, f'category_{lang}'), Post.id != post.id).order_by(desc(Post.pub_date)).limit(2).all()
+            if len(related_posts) < 2:
+                fallback_posts = Post.query.filter(Post.id != post.id).order_by(desc(Post.pub_date)).limit(2 - len(related_posts)).all()
+                related_posts.extend(fallback_posts)
+
+            hreflang_tags = generate_hreflang_tags('post_detail', slug=slug)
+            return render_template('post_detail.html', post=post, related_posts=related_posts, json_ld_data=json.dumps(json_ld_data, indent=4), hreflang_tags=hreflang_tags, **seo_data)
+
+        @app.route('/<lang>/projects')
+        def projects(lang):
+            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
+            t = translations[lang]
+            all_projects = Project.query.order_by(Project.display_order).all()
+            seo_data = create_seo_data(f"{t['projects_page_title']} | {t['default_title_tag']}", t['projects_header_subtitle'])
+            hreflang_tags = generate_hreflang_tags('projects')
+            return render_template('projects.html', projects=all_projects, hreflang_tags=hreflang_tags, **seo_data)
+
+        @app.route('/<lang>/project/<string:slug>')
+        def project_detail(lang, slug):
+            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
+            project = Project.query.filter_by(slug=slug).first_or_404()
+            t = translations[lang]
+            title = getattr(project, f'title_{lang}')
+            description = getattr(project, f'description_{lang}', '')
+            tags = getattr(project, f'tags_{lang}', '').split(',')
+            seo_data = create_seo_data(f"{title} | {t['projects_page_title']}", description[:160], f'projects/{project.image_file}', keywords=[t['nav_projects']] + tags)
+            hreflang_tags = generate_hreflang_tags('project_detail', slug=slug)
+            return render_template('project_detail.html', project=project, hreflang_tags=hreflang_tags, **seo_data)
+
+        @app.route('/<lang>/stories')
+        def stories(lang):
+            if lang not in ['fa', 'en']: lang = 'fa'
+            t = translations[lang]
+            all_stories = Story.query.order_by(Story.display_order).all()
+            category_lang_field = getattr(Story, f'category_{lang}')
+            categories_query = db.session.query(category_lang_field).distinct().all()
+            unique_categories = [c[0] for c in categories_query if c[0]]
+            seo_data = create_seo_data(f"{t['stories_page_title']} | {t['default_title_tag']}", t['stories_header_subtitle'])
+            hreflang_tags = generate_hreflang_tags('stories')
+            return render_template('stories.html', stories=all_stories, categories=unique_categories, hreflang_tags=hreflang_tags, **seo_data)
 
         @app.route('/<lang>/story/<string:slug>')
         def story_detail(lang, slug):
-            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
+            if lang not in ['fa', 'en']: lang = 'fa'
             story = Story.query.filter_by(slug=slug).first_or_404()
-            return render_template('story_detail.html', story=story)
-
-        @app.route('/<lang>/resume')
-        def resume(lang):
-            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            return render_template('landing_resume.html')
+            t = translations[lang]
+            seo_data = create_seo_data(f"{story.title} | {t['stories_page_title']}", story.excerpt[:160], f'stories/{story.image_file}', keywords=[t['nav_stories'], getattr(story, f'category_{lang}')])
+            json_ld_data = {
+                "@context": "https://schema.org", "@type": "Article", "headline": story.title,
+                "description": seo_data['meta_description'], "image": seo_data['og_image'],
+                "datePublished": story.pub_date.isoformat(),
+                "author": {"@type": "Person", "name": t['blog_author_name']}
+            }
+            hreflang_tags = generate_hreflang_tags('story_detail', slug=slug)
+            return render_template('story_detail.html', story=story, json_ld_data=json.dumps(json_ld_data, indent=4), hreflang_tags=hreflang_tags, **seo_data)
 
         @app.route('/<lang>/contact')
         def contact(lang):
             if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
-            return render_template('contact.html')
+            t = translations[lang]
+            seo_data = create_seo_data(f"{t['contact_page_title']} | {t['default_title_tag']}", t['contact_header_subtitle'])
+            hreflang_tags = generate_hreflang_tags('contact')
+            return render_template('contact.html', hreflang_tags=hreflang_tags, **seo_data)
+
+        @app.route('/<lang>/resume-pro')
+        def resume_pro(lang):
+            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
+            return render_template('resume_pro.html')
+            
+        @app.route('/<lang>/resume')
+        def resume(lang):
+            if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
+            return render_template('landing_resume.html')
 
         @app.route('/<lang>/ai-assistant')
         def ai_assistant(lang):
@@ -264,14 +346,6 @@ def create_app():
             session.pop('chat_history', None)
             return render_template('ai_assistant.html')
 
-        @app.route('/api/ask', methods=['POST'])
-        def ask_api():
-            if not GOOGLE_API_KEY:
-                return jsonify({'text': 'خطا: کلید API گوگل تنظیم نشده است.'}), 500
-            # ... (rest of the API logic)
-            pass
-
-        # --- Login/Logout for Admin ---
         @app.route('/login', methods=['GET', 'POST'])
         def login():
             if current_user.is_authenticated:
@@ -290,55 +364,32 @@ def create_app():
         def logout():
             logout_user()
             return redirect(url_for('home', lang='fa'))
-            
-        # --- DB Initialization Command ---
+
         @app.cli.command('init-db')
         def init_db_command():
-            with app.app_context():
-                db.drop_all()
-                db.create_all()
-                print("Seeding data...")
-
-                # --- Create Admin User ---
-                admin_user = User(username='admin')
-                admin_user.set_password('your-very-strong-and-secret-password')
-                db.session.add(admin_user)
-                print("Admin user created with username: admin")
-                
-                # --- Import Seed Data ---
-                from seed_data import blog_content_fa, blog_content_en, blog_content_ar, blog_content_de, project_content_fa, project_content_en, new_post_content_fa, new_post_content_en
-                
-                post1 = Post(
-                    slug='landing-page-design-principles', image_file='post-image-1.jpg', title_fa='۵ اصل کلیدی در طراحی لندینگ پیج موفق', title_en='5 Key Principles for Successful Landing Page Design', title_ar='5 مبادئ أساسية لتصميم صفحة هبوط ناجحة', title_de='5 Schlüsselprinzipien für erfolgreiches Landing-Page-Design', category_fa='طراحی', category_en='Design', category_ar='تصميم', category_de='Design', content_fa=blog_content_fa['landing-page-design-principles'], content_en=blog_content_en['landing-page-design-principles'], content_ar=blog_content_ar['landing-page-design-principles'], content_de=blog_content_de['landing-page-design-principles']
-                )
-                post2 = Post(
-                    slug='website-speed-and-seo', image_file='post-image-2.jpg', title_fa='چرا سرعت وب‌سایت برای سئو اهمیت دارد؟', title_en='Why is Website Speed Important for SEO?', title_ar='لماذا تعتبر سرعة الموقع مهمة لتحسين محركات البحث؟', title_de='Warum ist die Website-Geschwindigkeit für SEO wichtig?', category_fa='تکنولوژی', category_en='Technology', category_ar='تكنولوجيا', category_de='Technologie', content_fa=blog_content_fa['website-speed-and-seo'], content_en=blog_content_en['website-speed-and-seo'], content_ar=blog_content_ar['website-speed-and-seo'], content_de=blog_content_de['website-speed-and-seo']
-                )
-                post3 = Post(
-                    slug='how-i-built-this-website-with-flask', image_file='post-image-3.jpg', title_fa='چطور این سایت را با Flask ساختم؟', title_en='How I Built This Website with Flask', title_ar='كيف قمت ببناء هذا الموقع باستخدام Flask', title_de='Wie ich diese Website mit Flask erstellt habe', category_fa='توسعه', category_en='Development', category_ar='تطوير', category_de='Entwicklung', content_fa=blog_content_fa['how-i-built-this-website-with-flask'], content_en=blog_content_en['how-i-built-this-website-with-flask'], content_ar=blog_content_ar['how-i-built-this-website-with-flask'], content_de=blog_content_de['how-i-built-this-website-with-flask']
-                )
-                post4 = Post(
-                    slug='how-i-optimized-this-site-for-seo', image_file='seo-case-study.jpg', title_fa='چگونه این سایت را برای سئو بهینه کردم: یک نمونه کار عملی', title_en='How I Optimized This Site for SEO: A Practical Case Study', title_ar='كيف قمت بتحسين هذا الموقع للسيو: دراسة حالة عملية', title_de='Wie ich diese Seite für SEO optimiert habe: Eine praktische Fallstudie', category_fa='سئو', category_en='SEO', category_ar='سيو', category_de='SEO', content_fa=new_post_content_fa, content_en=new_post_content_en, content_ar=new_post_content_en, content_de=new_post_content_en
-                )
-                project1 = Project(
-                    slug='personal-portfolio-website', title_fa='وب‌سایت شخصی و نمونه کارها', title_en='Personal Portfolio Website', title_ar='موقع المحفظة الشخصية', title_de='Persönliche Portfolio-Website', description_fa='یک وب‌سایت کامل و دینامیک برای نمایش مهارت‌ها و نمونه کارها.', description_en='A complete and dynamic website to showcase skills and portfolio.', image_file='project-portfolio-main.jpg', project_url='https://mehdimi2.pythonanywhere.com/', tags_fa='فلسک, SQLAlchemy, جاوااسکریپت', tags_en='Flask, SQLAlchemy, JavaScript', display_order=1
-                )
-                project2 = Project(
-                    slug='online-resume-landing-page', title_fa='لندینگ پیج رزومه آنلاین', title_en='Online Resume Landing Page', title_ar='صفحة هبوط للسيرة الذاتية', title_de='Online-Lebenslauf-Landingpage', description_fa='یک صفحه تک صفحه‌ای جذاب برای نمایش رزومه با انیمیشن‌های زیبا.', description_en='An attractive single-page site to display a resume with beautiful animations.', image_file='project-resume-landing.jpg', project_url='/fa/resume', tags_fa='HTML, CSS, GSAP', tags_en='HTML, CSS, GSAP', display_order=2
-                )
-                project3 = Project(
-                    slug='bi-dashboard', title_fa='پلتفرم هوش تجاری: داشبورد تحلیل فروش و KPI', title_en='BI Platform: Sales & KPI Analytics Dashboard', title_ar='منصة ذكاء الأعمال: لوحة تحكم تحليلات المبيعات و KPI', title_de='BI-Plattform: Dashboard für Vertriebs- & KPI-Analysen', description_fa='یک راهکار جامع هوش تجاری (BI) برای تبدیل داده‌های پیچیده فروش به داشبوردهای بصری و قابل درک.', description_en='A comprehensive BI solution for transforming complex sales data into visual, intuitive dashboards.', content_fa=project_content_fa['bi-dashboard'], content_en=project_content_en['bi-dashboard'], content_ar=project_content_en['bi-dashboard'], content_de=project_content_en['bi-dashboard'], image_file='project-dashboard-mockup.jpg', tags_fa='هوش تجاری, تحلیل داده, SaaS, پایتون, Flask, Chart.js', tags_en='Business Intelligence, Data Analysis, SaaS, Python, Flask, Chart.js', tags_ar='ذكاء الأعمال, تحليل البيانات, SaaS, بايثون, فلاسك, Chart.js', tags_de='Business Intelligence, Datenanalyse, SaaS, Python, Flask, Chart.js', display_order=3
-                )
-                story1 = Story(title='بازآفرینی یک برند', slug='reimagining-a-brand', excerpt='چگونه یک برند قدیمی را برای نسل جدید بازطراحی کردیم؟', content='متن کامل داستان...', image_file='story-brand-reimagined.jpg', display_order=1)
-                story2 = Story(title='مصاحبه با یک مینیمالیست', slug='interview-with-a-minimalist', excerpt='گفتگویی با «سارا اکبری»، طراح UI.', content='متن کامل داستان...', image_file='story-minimalist-designer.jpg', display_order=2)
-                
-                db.session.add_all([post1, post2, post3, post4, project1, project2, project3, story1, story2])
-                db.session.commit()
-                print("Database has been initialized and seeded successfully.")
-
+            db.drop_all()
+            db.create_all()
+            print("Database cleared and tables created.")
+            from seed_data import blog_posts_data, projects_data, stories_data, site_content_data, news_data
+            admin_user = User(username='admin')
+            admin_user.set_password('your-very-strong-and-secret-password')
+            db.session.add(admin_user)
+            print("Admin user created with username: admin")
+            for item in site_content_data: db.session.add(SiteContent(key=item['key'], value=item['value']))
+            print(f"Seeded {len(site_content_data)} site content entries.")
+            for data in blog_posts_data: db.session.add(Post(**data))
+            print(f"Seeded {len(blog_posts_data)} blog posts.")
+            for data in projects_data: db.session.add(Project(**data))
+            print(f"Seeded {len(projects_data)} projects.")
+            for data in stories_data: db.session.add(Story(**data))
+            print(f"Seeded {len(stories_data)} stories.")
+            for data in news_data: db.session.add(News(**data))
+            print(f"Seeded {len(news_data)} news entries.")
+            db.session.commit()
+            print("Database has been initialized and seeded successfully.")
+            
     return app
 
-# --- 5. CREATE APP INSTANCE ---
 app = create_app()
 
 if __name__ == '__main__':
