@@ -298,18 +298,18 @@ body.lang-fa .read-more:hover i, body.lang-ar .read-more:hover i { transform: tr
     z-index: 2;
 }
 
-.project-overlay h3, 
-.project-overlay .project-description, 
-.project-overlay .project-tags, 
+.project-overlay h3,
+.project-overlay .project-description,
+.project-overlay .project-tags,
 .project-overlay .view-project-link {
     transform: translateY(20px);
     opacity: 0;
     transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
-.project-card:hover .project-overlay h3, 
-.project-card:hover .project-overlay .project-description, 
-.project-card:hover .project-overlay .project-tags, 
+.project-card:hover .project-overlay h3,
+.project-card:hover .project-overlay .project-description,
+.project-card:hover .project-overlay .project-tags,
 .project-card:hover .project-overlay .view-project-link {
     transform: translateY(0);
     opacity: 1;

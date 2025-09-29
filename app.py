@@ -175,7 +175,7 @@ class PostAdminView(AdminModelView):
                                       url_relative_path='images/blog/',
                                       thumbnail_size=(100, 100, True))
     }
-    
+
 class ProjectAdminView(AdminModelView):
     form_overrides = {
         'content_fa': CKEditorField,
@@ -219,14 +219,14 @@ def load_user(user_id):
 # --- 4. APP FACTORY ---
 def create_app():
     app = Flask(__name__)
-    
+
     # Load configuration from config.py for better security
     app.config.from_pyfile('config.py')
     app.config.update(
         FLASK_ADMIN_SWATCH='cerulean',
         CKEDITOR_PKG_TYPE='standard'
     )
-    
+
     db.init_app(app)
     admin.init_app(app)
     login_manager.init_app(app)
@@ -444,7 +444,7 @@ def create_app():
             description = t.get('resume_about_me_desc', 'A creative and detail-oriented developer...')
             seo_data = create_seo_data(title, description)
             return render_template('resume_pro.html', **seo_data)
-            
+
         @app.route('/<lang>/resume')
         def resume(lang):
             if lang not in ['fa', 'en', 'ar', 'de']: return "Language not supported", 404
@@ -479,12 +479,12 @@ def create_app():
             lang = request.path.split('/')[1] if request.path.startswith(('/', 'en', 'ar', 'de')) else 'fa'
             context = inject_shared_data()
             context['lang'] = lang
-            
+
             # Add default SEO data for the 404 page
             t = translations.get(lang, translations['en']) # Fallback to English
             meta_title = f"404 Not Found | {t.get('default_title_tag', 'Mi Design')}"
             meta_description = t.get('meta_desc_404', "The page you are looking for does not exist.")
-            
+
             # Add SEO data to the context
             context['meta_title'] = meta_title
             context['meta_description'] = meta_description
@@ -524,7 +524,7 @@ def create_app():
             print(f"Seeded {len(plans_data)} pricing plans.")
             db.session.commit()
             print("Database has been initialized and seeded successfully.")
-            
+
     return app
 
 app = create_app()

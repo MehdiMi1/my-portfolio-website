@@ -913,21 +913,21 @@ View your "About Us" page as a powerful sales tool. It's where you convert casua
 
 projects_data = [
     {
-        'slug': 'bi-dashboard-platform', 
+        'slug': 'bi-dashboard-platform',
         'title_fa': 'پلتفرم هوش تجاری: داشبورد تحلیل فروش و KPI',
         'title_en': 'BI Platform: Sales & KPI Analytics Dashboard',
-        'title_ar': 'منصة ذكاء الأعمال: لوحة تحكم تحليلات المبيعات و KPI', 
+        'title_ar': 'منصة ذكاء الأعمال: لوحة تحكم تحليلات المبيعات و KPI',
         'title_de': 'BI-Plattform: Dashboard für Vertriebs- & KPI-Analysen',
         'description_fa': 'یک راهکار جامع هوش تجاری (BI) برای تبدیل داده‌های پیچیده فروش به داشبوردهای بصری و قابل درک که به عنوان یک پروژه شخصی توسعه داده شده است.',
         'description_en': 'A comprehensive BI solution for transforming complex sales data into visual, intuitive dashboards, developed as a personal project.',
-        'description_ar': 'حل ذكاء أعمال شامل لتحويل بيانات المبيعات المعقدة إلى لوحات تحكم مرئية وبديهية، تم تطويره كمشروع شخصي.', 
+        'description_ar': 'حل ذكاء أعمال شامل لتحويل بيانات المبيعات المعقدة إلى لوحات تحكم مرئية وبديهية، تم تطويره كمشروع شخصي.',
         'description_de': 'Eine umfassende BI-Lösung zur Umwandlung komplexer Verkaufsdaten in visuelle, intuitive Dashboards, entwickelt als persönliches Projekt.',
         'image_file': 'project-dashboard-mockup.jpg',
         'project_url': '#',
-        'tags_fa': 'هوش تجاری,تحلیل داده,Flask,Chart.js', 
-        'tags_en': 'Business Intelligence,Data Analysis,Flask,Chart.js', 
-        'tags_ar': 'ذكاء الأعمال,تحليل البيانات,Flask,Chart.js', 
-        'tags_de': 'Business Intelligence,Datenanalyse,Flask,Chart.js', 
+        'tags_fa': 'هوش تجاری,تحلیل داده,Flask,Chart.js',
+        'tags_en': 'Business Intelligence,Data Analysis,Flask,Chart.js',
+        'tags_ar': 'ذكاء الأعمال,تحليل البيانات,Flask,Chart.js',
+        'tags_de': 'Business Intelligence,Datenanalyse,Flask,Chart.js',
         'display_order': 1,
         'content_fa': """
 ### چالش: دریایی از داده‌ها، قطره‌ای از بینش
@@ -943,22 +943,22 @@ projects_data = [
         'content_en': """...""", 'content_ar': """...""", 'content_de': """..."""
     },
     {
-        'slug': 'personal-portfolio-website', 
+        'slug': 'personal-portfolio-website',
         'title_fa': 'وب‌سایت شخصی و نمونه کارها (همین سایت)',
-        'title_en': 'Personal Portfolio Website (This Site)', 
-        'title_ar': 'موقع المحفظة الشخصية (هذا الموقع)', 
+        'title_en': 'Personal Portfolio Website (This Site)',
+        'title_ar': 'موقع المحفظة الشخصية (هذا الموقع)',
         'title_de': 'Persönliche Portfolio-Website (Diese Seite)',
         'description_fa': 'یک وب‌سایت کامل و دینامیک چندزبانه برای نمایش مهارت‌ها و نمونه کارها، همراه با پنل مدیریت محتوا.',
         'description_en': 'A complete and dynamic multilingual website to showcase skills and portfolio, with a content management panel.',
-        'description_ar': 'موقع ويب كامل وديناميكي متعدد اللغات لعرض المهارات والمحفظة، مع لوحة إدارة محتوى.', 
+        'description_ar': 'موقع ويب كامل وديناميكي متعدد اللغات لعرض المهارات والمحفظة، مع لوحة إدارة محتوى.',
         'description_de': 'Eine vollständige und dynamische mehrsprachige Website zur Präsentation von Fähigkeiten und Portfolio, mit einem Content-Management-Panel.',
-        'image_file': 'project-portfolio-main.jpg', 
+        'image_file': 'project-portfolio-main.jpg',
         'project_url': '#',
         'content_fa': None, 'content_en': None, 'content_ar': None, 'content_de': None,
-        'tags_fa': 'فلسک,SQLAlchemy,جاوااسکریپت,چندزبانه', 
-        'tags_en': 'Flask,SQLAlchemy,JavaScript,Multilingual', 
-        'tags_ar': 'فلاسك,SQLAlchemy,جافاسكريبت,متعدد اللغات', 
-        'tags_de': 'Flask,SQLAlchemy,JavaScript,Mehrsprachig', 
+        'tags_fa': 'فلسک,SQLAlchemy,جاوااسکریپت,چندزبانه',
+        'tags_en': 'Flask,SQLAlchemy,JavaScript,Multilingual',
+        'tags_ar': 'فلاسك,SQLAlchemy,جافاسكريبت,متعدد اللغات',
+        'tags_de': 'Flask,SQLAlchemy,JavaScript,Mehrsprachig',
         'display_order': 2
     },
     {
@@ -990,7 +990,7 @@ projects_data = [
 
 ### تکنولوژی‌ها
 این پروژه با `Python/Flask` برای بک‌اند و `SQLAlchemy` برای مدیریت دیتابیس کاربران و دستورهای پخت ساخته شده است. فرانت‌اند با تمرکز بر طراحی تمیز و کاربرپسند (UI/UX) توسعه یافته تا تجربه کاربری لذت‌بخشی را فراهم کند.
-""", 
+""",
         'content_en': """...""", 'content_ar': """...""", 'content_de': """..."""
     },
     {
@@ -1021,7 +1021,7 @@ projects_data = [
 
 ### تکنولوژی‌ها
 این اپلیکیشن با استفاده از `Python/Flask` ساخته شده و داده‌ها را در یک دیتابیس `SQLite` ذخیره می‌کند. برای ساخت نمودارهای داینامیک و جذاب در داشبورد، از کتابخانه `Chart.js` در فرانت‌اند استفاده شده است.
-""", 
+""",
         'content_en': """...""", 'content_ar': """...""", 'content_de': """..."""
     }
 ]
