@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Helper function to get translated text from the global object set in base.html
     const t = (key) => {
         return window.translations?.[window.currentLang]?.[key] || key;
     };
 
     // =============================================
-    // ===         Preloader Logic (Updated)     ===
+    // ===           Preloader Logic             ===
     // =============================================
     const preloader = document.getElementById('preloader');
     if (preloader) {
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =============================================
-    // ===         Header Scroll Effect          ===
+    // ===           Header Scroll Effect        ===
     // =============================================
     const header = document.querySelector('.header');
     if (header) {
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =============================================
-    // ===         Back to Top Button            ===
+    // ===           Back to Top Button          ===
     // =============================================
     const backToTopBtn = document.getElementById('back-to-top');
     if (backToTopBtn) {
@@ -52,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =============================================
-    // ===         Mobile Navigation Toggle      ===
+    // ===           Mobile Navigation Toggle    ===
     // =============================================
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const mobileNav = document.getElementById('mobile-nav');
@@ -81,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =============================================
-    // ===         Multi-language Switcher       ===
+    // ===           Multi-language Switcher     ===
     // =============================================
     const langSelectorBtn = document.getElementById('lang-selector-btn');
     const langDropdown = document.getElementById('lang-dropdown');
@@ -98,13 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =============================================
-    // ===  Page Transition Script (REMOVED)     ===
-    // =============================================
-    // The problematic page transition script has been completely removed to ensure all links work reliably.
-    // window.addEventListener('pageshow', ...); is also removed as it was part of this feature.
-
-    // =============================================
-    // ===         Reveal on Scroll Animation    ===
+    // ===           Reveal on Scroll Animation  ===
     // =============================================
     const revealElements = document.querySelectorAll('.reveal-on-scroll');
     if (revealElements.length > 0) {
@@ -120,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =============================================
-    // ===         Form Submission (Formspree)   ===
+    // ===           Form Submission (Formspree) ===
     // =============================================
     async function handleFormSubmit(form, statusDiv, successMessageKey) {
         form.addEventListener('submit', async (e) => {
@@ -154,47 +147,56 @@ document.addEventListener('DOMContentLoaded', function() {
     if (contactForm) {
         handleFormSubmit(contactForm, document.getElementById('form-status'), 'js_form_success');
     }
-    
+
     // =============================================
-    // ===         Generic Filtering Logic       ===
+    // ===  Generic Filtering Logic (IMPROVED)   ===
     // =============================================
-    function initializeFilter(filterContainerId, itemSelector) {
+    function initializeFilter(filterContainerId, gridSelector, itemSelector) {
         const filterContainer = document.getElementById(filterContainerId);
         if (!filterContainer) return;
-        const items = document.querySelectorAll(itemSelector);
+
+        const grid = document.querySelector(gridSelector);
+        if (!grid) return;
+
+        const items = grid.querySelectorAll(itemSelector);
         if (items.length === 0) return;
+
+        let noResultsMessage = grid.querySelector('.no-results-message');
+
         filterContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-btn')) {
                 filterContainer.querySelector('.active').classList.remove('active');
                 e.target.classList.add('active');
+
                 const filterValue = e.target.dataset.filter;
+                let visibleCount = 0;
+
                 items.forEach(item => {
                     const itemCategory = item.dataset.category;
                     if (filterValue === 'all' || itemCategory === filterValue) {
                         item.style.display = '';
+                        visibleCount++;
                     } else {
                         item.style.display = 'none';
                     }
                 });
+
+                if (noResultsMessage) {
+                    if (visibleCount === 0) {
+                        noResultsMessage.style.display = 'block';
+                    } else {
+                        noResultsMessage.style.display = 'none';
+                    }
+                }
             }
         });
     }
-    
-    initializeFilter('blog-filters', '.blog-grid .post-card');
-    initializeFilter('story-filters', '.stories-container .story-parallax-item');
+
+    initializeFilter('blog-filters', '.blog-grid', '.post-card');
+    initializeFilter('story-filters', '.stories-container', '.story-parallax-item');
 
     // =============================================
-    // ===         AI Chat Functionality         ===
-    // =============================================
-    // The AI chat logic from your original file should be here
-    
-    // =============================================
-    // ===         Skill Card 3D Hover Effect    ===
-    // =============================================
-    // The 3D hover logic from your original file should be here
-
-    // =============================================
-    // ===      NEW: Animated Counters           ===
+    // ===           Animated Counters           ===
     // =============================================
     function animateCounters() {
         const counters = document.querySelectorAll('.stat-number');
@@ -227,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
     animateCounters();
 
     // =============================================
-    // ===   NEW: SEO Meta Tag Generator Tool    ===
+    // ===      SEO Meta Tag Generator Tool      ===
     // =============================================
     function initializeSeoTool() {
         const seoTitleInput = document.getElementById('seo-title');
@@ -236,10 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const previewDesc = document.getElementById('preview-desc');
         const titleCounter = document.getElementById('title-counter');
         const descCounter = document.getElementById('desc-counter');
+
         if (!seoTitleInput) return;
+
         const lang = window.currentLang || 'fa';
         const defaultTitle = lang === 'fa' ? "عنوان شما در اینجا نمایش داده می‌شود" : "Your Title Will Be Displayed Here";
         const defaultDesc = lang === 'fa' ? "توضیحات متای شما پس از وارد کردن در کادر مربوطه، در این قسمت نمایش داده خواهد شد..." : "Your meta description will be shown in this area after you type it in the box above...";
+
         function updatePreview() {
             const titleValue = seoTitleInput.value;
             previewTitle.textContent = titleValue || defaultTitle;
@@ -247,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
             titleCounter.textContent = `${titleLength} / 60`;
             titleCounter.style.color = titleLength > 60 ? '#ff6b6b' : '';
             titleCounter.style.fontWeight = titleLength > 60 ? 'bold' : 'normal';
+
             const descValue = seoDescInput.value;
             previewDesc.textContent = descValue || defaultDesc;
             const descLength = descValue.length;
@@ -254,9 +260,10 @@ document.addEventListener('DOMContentLoaded', function() {
             descCounter.style.color = descLength > 160 ? '#ff6b6b' : '';
             descCounter.style.fontWeight = descLength > 160 ? 'bold' : 'normal';
         }
+
         seoTitleInput.addEventListener('input', updatePreview);
         seoDescInput.addEventListener('input', updatePreview);
     }
     initializeSeoTool();
 
-}); // End of DOMContentLoaded listener
+});

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}500 - خطای داخلی سرور{% endblock %}
+
+{% block content %}
+<style>
+    .error-page-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 60vh;
+        padding: 80px 0;
+    }
+    .error-code {
+        font-size: 8rem;
+        font-weight: 800;
+        font-family: var(--font-family-secondary);
+        color: var(--primary-surface);
+        text-shadow: -2px -2px 0 var(--accent-blue-violet), 2px -2px 0 var(--accent-blue-violet), -2px 2px 0 var(--accent-blue-violet), 2px 2px 0 var(--accent-blue-violet);
+        margin: 0;
+        line-height: 1;
+    }
+    .error-title {
+        font-size: 2.5rem;
+        margin: 20px 0 15px 0;
+        color: var(--text-light);
+    }
+    .error-message {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        max-width: 500px;
+        margin-bottom: 40px;
+    }
+</style>
+
+<section class="error-page-section">
+    <div class="container">
+        <h1 class="error-code reveal-on-scroll">500</h1>
+        <h2 class="error-title reveal-on-scroll" style="transition-delay: 0.2s;">
+            {% if lang == 'fa' %}خطای داخلی سرور{% else %}Internal Server Error{% endif %}
+        </h2>
+        <p class="error-message reveal-on-scroll" style="transition-delay: 0.4s;">
+            {% if lang == 'fa' %}متاسفانه یک خطای غیرمنتظره در سمت سرور رخ داده است. تیم فنی ما از این موضوع مطلع شده و در حال بررسی آن است. لطفاً کمی بعد دوباره تلاش کنید.{% else %}Sorry, an unexpected error occurred on our end. Our technical team has been notified and is looking into it. Please try again in a little while.{% endif %}
+        </p>
+        <a href="{{ url_for('home', lang=lang) }}" class="btn btn-primary reveal-on-scroll" style="transition-delay: 0.6s;">
+            {% if lang == 'fa' %}بازگشت به صفحه اصلی{% else %}Go to Homepage{% endif %}
+        </a>
+    </div>
+</section>
+{% endblock %}

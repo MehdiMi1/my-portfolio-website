@@ -193,7 +193,24 @@ body.lang-en, body.lang-de { font-family: 'Montserrat', sans-serif; }
 /* ============================================= */
 /* ===        Reusable Components            === */
 /* ============================================= */
-.btn { padding: 14px 32px; border-radius: 50px; font-weight: 700; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: none; cursor: pointer; font-family: var(--font-family-secondary); text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
+.btn {
+    position: relative;
+    z-index: 2;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-family-secondary);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
 .btn-primary { background: linear-gradient(45deg, var(--accent-gold), #FFDC6A); color: var(--bg-dark); box-shadow: 0 6px 15px rgba(255, 215, 0, 0.3); }
 .btn-primary:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5); }
 .btn-secondary { background-color: var(--primary-surface); color: var(--text-light); border: 1px solid var(--border-color-dark); }
@@ -263,10 +280,43 @@ body.lang-fa .read-more:hover i, body.lang-ar .read-more:hover i { transform: tr
 .project-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7); }
 .project-image-link img { width: 100%; height: 350px; object-fit: cover; transition: transform 0.5s ease; }
 .project-card:hover .project-image-link img { transform: scale(1.1); }
-.project-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(18, 18, 18, 1) 20%, rgba(18, 18, 18, 0.8) 60%, transparent); color: white; padding: 30px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; text-align: right; height: 100%; z-index: 2; }
+
+/* START OF BUG FIX */
+.project-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(18, 18, 18, 1) 20%, rgba(18, 18, 18, 0.8) 60%, transparent);
+    color: white;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* This keeps the content block at the bottom */
+    text-align: right;
+    height: 100%;
+    z-index: 2;
+}
+
+.project-overlay h3, 
+.project-overlay .project-description, 
+.project-overlay .project-tags, 
+.project-overlay .view-project-link {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.project-card:hover .project-overlay h3, 
+.project-card:hover .project-overlay .project-description, 
+.project-card:hover .project-overlay .project-tags, 
+.project-card:hover .project-overlay .view-project-link {
+    transform: translateY(0);
+    opacity: 1;
+}
+/* END OF BUG FIX */
+
 body.lang-en .project-overlay, body.lang-de .project-overlay { text-align: left; }
-.project-overlay h3, .project-overlay .project-description, .project-overlay .project-tags, .project-overlay .view-project-link { transform: translateY(20px); opacity: 0; transition: transform 0.4s ease, opacity 0.4s ease; }
-.project-card:hover .project-overlay h3, .project-card:hover .project-overlay .project-description, .project-card:hover .project-overlay .project-tags, .project-card:hover .project-overlay .view-project-link { transform: translateY(0); opacity: 1; }
 .project-overlay h3 { font-size: 1.8rem; margin-bottom: 10px; transition-delay: 0.1s; }
 .project-description { font-size: 1rem; color: var(--text-muted); margin-bottom: 15px; transition-delay: 0.2s; line-height: 1.6; }
 .project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; transition-delay: 0.3s; }
@@ -304,7 +354,6 @@ body.lang-en .project-overlay, body.lang-de .project-overlay { text-align: left;
 .story-title { font-size: 3.5rem; margin-bottom: 20px; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 .story-excerpt { font-size: 1.3rem; max-width: 700px; margin: 0 auto 30px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
-/* --- FIX FOR PAGE DETAIL OVERLAY BUG --- */
 .post-detail-container, .story-detail-container {
     position: relative;
     z-index: 1;
@@ -359,17 +408,16 @@ body.lang-en .project-overlay, body.lang-de .project-overlay { text-align: left;
     border-top-left-radius: 80px;
     border-top-right-radius: 80px;
     position: relative;
-    z-index: 5; /* HIGHEST Z-INDEX */
+    z-index: 5;
 }
 
 .back-link-section {
     padding-bottom: 80px;
     text-align: center;
-    background-color: var(--primary-surface); /* Ensure background color continues */
+    background-color: var(--primary-surface);
     position: relative;
     z-index: 5;
 }
-/* --- END OF FIX --- */
 
 .ai-chat-section { padding: 80px 0; }
 .chat-container { max-width: 800px; margin: 0 auto; background-color: var(--primary-surface); border: 1px solid var(--border-color-dark); border-radius: var(--border-radius); box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; height: 75vh; }
@@ -628,4 +676,25 @@ body.lang-en .news-badge, body.lang-de .news-badge { margin-left: 0; margin-righ
 @media (max-width: 768px) {
     .tool-grid { grid-template-columns: 1fr; }
     .founder-image-placeholder { width: 280px; height: 280px; }
+}
+
+@media (max-width: 992px) and (min-width: 769px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+        text-align: center;
+    }
+    .footer-col h3::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .footer-col .logo, .footer-col .social-icons {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
 }

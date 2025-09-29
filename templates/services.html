@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block content %}
+<style>
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 40px;
+    }
+    .service-card {
+        background: linear-gradient(145deg, hsl(240, 6%, 15%), hsl(240, 6%, 12%)); /* Subtle dark gradient */
+        border: 1px solid var(--border-color-dark);
+        border-radius: var(--border-radius);
+        padding: 40px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .service-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        border-color: rgba(255, 215, 0, 0.5);
+    }
+    .service-card:hover::before {
+        opacity: 1;
+    }
+    .service-card .service-icon-wrapper {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 30px auto;
+        border-radius: 50%;
+        background-color: rgba(255, 215, 0, 0.05);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid var(--border-color-dark);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .service-card:hover .service-icon-wrapper {
+        background-color: rgba(255, 215, 0, 0.1);
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+    }
+    .service-card .service-icon {
+        font-size: 2.8rem;
+        color: var(--accent-gold);
+        transition: color 0.3s ease, transform 0.3s ease;
+    }
+    .service-card:hover .service-icon {
+        color: #ffffff;
+        transform: scale(1.1);
+    }
+    .service-card h3 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        color: var(--text-light);
+    }
+    .service-card p {
+        color: var(--text-muted);
+        flex-grow: 1;
+        margin-bottom: 30px;
+        line-height: 1.7;
+    }
+</style>
+
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ t.services_header_title }}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.services_header_subtitle }}</p>
+    </div>
+</section>
+
+<section class="features" style="padding: 100px 0;">
+    <div class="container">
+        <div class="services-grid">
+            {% for service in services %}
+                <div class="service-card reveal-on-scroll">
+                    <div class="service-icon-wrapper">
+                        <i class="{{ service.icon }} service-icon"></i>
+                    </div>
+                    <h3>{{ getattr(service, 'title_' + lang) }}</h3>
+                    <p>{{ getattr(service, 'description_' + lang) }}</p>
+                    <a href="{{ url_for('service_detail', lang=lang, slug=service.slug) }}" class="btn btn-secondary">{{ t.services_view_details_btn }}</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

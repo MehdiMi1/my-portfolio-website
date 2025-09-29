@@ -4,20 +4,12 @@
 {% block title %}{{ meta_title }}{% endblock %}
 {% block meta_description %}{{ meta_description }}{% endblock %}
 
-{% block json_ld %}
-    {% if json_ld_data %}
-    <script type="application/ld+json">
-        {{ json_ld_data|safe }}
-    </script>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
 <section class="story-detail-hero">
     <div class="story-detail-hero-bg" style="background-image: url('{{ url_for('static', filename='images/stories/' + story.image_file) if story.image_file else '' }}');"></div>
     <div class="container">
         <div class="story-detail-header">
-            <h1 class="reveal-on-scroll">{{ story.title }}</h1>
+            <h1 class="reveal-on-scroll">{{ getattr(story, 'title_' + lang) }}</h1>
             <div class="story-meta-detail reveal-on-scroll" style="transition-delay: 0.2s;">
                 <span>
                     <i class="fa-solid fa-calendar-days"></i>
@@ -36,16 +28,16 @@
 <div class="story-main-content-wrapper">
     <div class="container" style="max-width: 800px; margin: 0 auto;">
         <article class="story-body">
-            {{ story.content | markdown | safe }}
+            {{ getattr(story, 'content_' + lang) | markdown | safe }}
         </article>
         
         <div class="share-buttons-wrapper">
-            <h4>{% if lang == 'fa' %}این داستان را به اشتراک بگذارید:{% else %}Share this story:{% endif %}</h4>
+            <h4>{% if lang == 'fa' %}این داستان را به اشتراک بگذارید:{% elif lang == 'en' %}Share this story:{% elif lang == 'ar' %}شارك هذه القصة:{% else %}Teile diese Geschichte:{% endif %}</h4>
             <div class="share-buttons">
-                <a href="https://t.me/share/url?url={{ request.url }}&text={{ story.title }}" target="_blank" class="share-btn telegram" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://api.whatsapp.com/send?text={{ story.title }} {{ request.url }}" target="_blank" class="share-btn whatsapp" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ story.title }}" target="_blank" class="share-btn twitter" aria-label="Share on Twitter"><i class="fa-brands fa-twitter"></i></a>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.url }}&title={{ story.title }}" target="_blank" class="share-btn linkedin" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://t.me/share/url?url={{ request.url }}&text={{ getattr(story, 'title_' + lang) }}" target="_blank" class="share-btn telegram" aria-label="Share on Telegram"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://api.whatsapp.com/send?text={{ getattr(story, 'title_' + lang) }} {{ request.url }}" target="_blank" class="share-btn whatsapp" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ getattr(story, 'title_' + lang) }}" target="_blank" class="share-btn twitter" aria-label="Share on Twitter"><i class="fa-brands fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.url }}&title={{ getattr(story, 'title_' + lang) }}" target="_blank" class="share-btn linkedin" aria-label="Share on LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
             </div>
         </div>
     </div>

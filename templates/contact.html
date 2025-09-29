@@ -2,7 +2,6 @@
 {% set t = translations[lang] %}
 
 {% block title %}{{ meta_title }}{% endblock %}
-
 {% block meta_description %}{{ meta_description }}{% endblock %}
 
 {% block content %}
@@ -22,11 +21,11 @@
                 <div class="contact-details">
                     <p>
                         <i class="fa-solid fa-envelope"></i>
-                        <a href="mailto:{{ contact_details.email }}">{{ contact_details.email }}</a>
+                        <a href="mailto:{{ site_content_data.get('contact_email_info') }}">{{ site_content_data.get('contact_email_info') }}</a>
                     </p>
                     <p>
                         <i class="fa-solid fa-phone"></i>
-                        <a href="tel:+98{{ contact_details.phone }}">{{ contact_details.phone }}</a>
+                        <a href="tel:{{ site_content_data.get('contact_phone_info') }}">{{ site_content_data.get('contact_phone_info') }}</a>
                     </p>
                 </div>
                 <div class="social-icons-contact">

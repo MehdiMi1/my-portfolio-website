@@ -7,3 +7,6 @@ Flask-Admin
 Flask-Login
 Werkzeug
 gunicorn
+Flask-Compress
+Flask-Caching
+Flask-CKEditor

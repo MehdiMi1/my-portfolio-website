@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% set t = translations[lang] %}
+
+{% block title %}{{ getattr(service, 'title_' + lang) }} | {{ t.services_page_title }}{% endblock %}
+{% block meta_description %}{{ getattr(service, 'description_' + lang) }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Helper style for text alignment based on language direction */
+    body[dir="rtl"] {
+        --text-align-start: right;
+        --inset-inline-start: auto;
+        --inset-inline-end: 0;
+    }
+    body:not([dir="rtl"]) {
+        --text-align-start: left;
+        --inset-inline-start: 0;
+        --inset-inline-end: auto;
+    }
+
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 40px;
+        align-items: stretch;
+        justify-content: center;
+    }
+    .pricing-plan {
+        background: linear-gradient(145deg, hsl(240, 6%, 17%), hsl(240, 6%, 13%));
+        border: 1px solid var(--border-color-dark);
+        border-radius: var(--border-radius);
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    .pricing-plan:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 45px rgba(0,0,0,0.3);
+    }
+    .pricing-plan.featured {
+        transform: translateY(0);
+        border: 2px solid var(--accent-gold);
+        background: linear-gradient(145deg, hsl(240, 6%, 15%), hsl(240, 6%, 10%));
+        box-shadow: 0 20px 60px rgba(255, 215, 0, 0.15), 0 0 15px rgba(255, 215, 0, 0.1);
+    }
+    .featured-badge {
+        position: absolute;
+        top: 20px;
+        background: var(--accent-gold);
+        color: var(--bg-dark);
+        padding: 6px 40px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+    /* Position badge based on language direction */
+    body[dir="rtl"] .featured-badge {
+        right: -35px;
+        transform: rotate(45deg);
+    }
+    body:not([dir="rtl"]) .featured-badge {
+        left: -35px;
+        transform: rotate(-45deg);
+    }
+
+    .plan-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-top: 20px; /* Space for the badge on featured cards */
+        margin-bottom: 15px;
+        color: var(--text-muted);
+    }
+    .pricing-plan.featured .plan-title {
+        color: var(--text-light);
+        font-weight: 700;
+    }
+    .plan-price {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text-light);
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid var(--border-color-dark);
+        line-height: 1.2;
+    }
+    .pricing-plan.featured .plan-price {
+        font-size: 2.8rem;
+        color: var(--accent-gold);
+    }
+    .plan-price-note {
+        display: block;
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+    }
+    .features-title {
+        text-align: var(--text-align-start);
+        margin-bottom: 15px;
+        color: var(--text-light);
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 40px;
+        flex-grow: 1;
+        text-align: var(--text-align-start);
+    }
+    .features-list li {
+        padding: 12px 0;
+        color: var(--text-muted);
+        position: relative;
+        padding-inline-start: 25px;
+    }
+    .features-list li:not(:last-child) {
+        border-bottom: 1px solid var(--border-color-dark);
+    }
+    .features-list li::before {
+        content: '\\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        color: var(--accent-gold);
+        position: absolute;
+        inset-inline-start: 0;
+        top: 14px;
+    }
+    .pricing-plan .btn-primary {
+        width: 100%;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        font-size: 1.1rem;
+        margin-top: auto; /* Push button to the bottom */
+    }
+</style>
+
+<section class="page-header">
+    <div class="container">
+        <h1 class="reveal-on-scroll">{{ getattr(service, 'title_' + lang) }}</h1>
+        <p class="reveal-on-scroll" style="transition-delay: 0.2s;">{{ t.plans_header_subtitle }}</p>
+    </div>
+</section>
+
+<section class="features" style="padding: 100px 0;">
+    <div class="container">
+        <div class="pricing-grid">
+            {% for plan in service.plans|sort(attribute='display_order') %}
+            <div class="pricing-plan reveal-on-scroll {{ 'featured' if plan.is_featured }}">
+                {% if plan.is_featured %}
+                    <div class="featured-badge">{{ t.plans_most_popular }}</div>
+                {% endif %}
+                <h3 class="plan-title">{{ getattr(plan, 'title_' + lang) }}</h3>
+                
+                <div class="plan-price">
+                    {% set price_text = getattr(plan, 'price_' + lang) %}
+                    {% if t.plans_contact_us in price_text %}
+                        {{ price_text }}
+                    {% else %}
+                        <span class="plan-price-note">{{ t.plans_starting_from }}</span>
+                        {{ price_text.replace(t.plans_starting_from, '').strip() }}
+                    {% endif %}
+                </div>
+
+                <h4 class="features-title">{{ t.plans_features_title }}</h4>
+                <ul class="features-list">
+                    {% for feature in getattr(plan, 'features_' + lang).split('|') %}
+                        <li>{{ feature.strip() }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('contact', lang=lang) }}" class="btn btn-primary">{{ t.plans_order_now_btn }}</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

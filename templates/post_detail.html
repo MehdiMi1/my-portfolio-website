@@ -4,14 +4,6 @@
 {% block title %}{{ meta_title }}{% endblock %}
 {% block meta_description %}{{ meta_description }}{% endblock %}
 
-{% block json_ld %}
-    {% if json_ld_data %}
-    <script type="application/ld+json">
-        {{ json_ld_data|safe }}
-    </script>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
 <section class="post-detail-container">
 
@@ -63,7 +55,7 @@
             {% for rel_post in related_posts %}
             <div class="post-card reveal-on-scroll">
                 <a href="{{ url_for('post_detail', lang=lang, slug=rel_post.slug) }}" class="post-image-link">
-                    <img src="{{ url_for('static', filename='images/blog/' + rel_post.image_file) if rel_post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ rel_post.title_fa }}{% elif lang == 'en' %}{{ rel_post.title_en }}{% elif lang == 'ar' %}{{ rel_post.title_ar }}{% else %}{{ rel_post.title_de }}{% endif %}">
+                    <img src="{{ url_for('static', filename='images/blog/' + rel_post.image_file) if rel_post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ rel_post.title_fa }}{% elif lang == 'en' %}{{ rel_post.title_en }}{% elif lang == 'ar' %}{{ rel_post.title_ar }}{% else %}{{ rel_post.title_de }}{% endif %}" loading="lazy">
                 </a>
                 <div class="post-content">
                     <span class="post-category">{% if lang == 'fa' %}{{ rel_post.category_fa }}{% elif lang == 'en' %}{{ rel_post.category_en }}{% elif lang == 'ar' %}{{ rel_post.category_ar }}{% else %}{{ rel_post.category_de }}{% endif %}</span>

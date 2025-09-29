@@ -16,7 +16,7 @@
     <div class="container">
         <div class="about-grid">
             <div class="about-image reveal-on-scroll">
-                <img src="{{ url_for('static', filename='images/about-creative-brainstorm-session.jpg') }}" alt="{% if lang == 'fa' %}فضای داخلی یک دفتر طراحی خلاق{% else %}Creative design office interior{% endif %}">
+                <img src="{{ url_for('static', filename='images/about-creative-brainstorm-session.jpg') }}" alt="{% if lang == 'fa' %}فضای داخلی یک دفتر طراحی خلاق{% else %}Creative design office interior{% endif %}" loading="lazy">
             </div>
             <div class="about-text reveal-on-scroll" style="transition-delay: 0.3s;">
                 <h2>{{ t.about_philosophy_title }}</h2>

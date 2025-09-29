@@ -10,19 +10,24 @@
 
     <title>{{ meta_title|default(t.default_title_tag) }}</title>
     <meta name="description" content="{{ meta_description|default(t.meta_desc_home) }}">
+    {% if keywords %}
+    <meta name="keywords" content="{{ keywords|join(', ') }}">
+    {% endif %}
 
     <link rel="canonical" href="{{ request.url }}">
-    
     {% if hreflang_tags %}
         {% for lang_code, url in hreflang_tags.items() %}
             <link rel="alternate" hreflang="{{ lang_code }}" href="{{ url }}">
         {% endfor %}
     {% endif %}
 
-    {% if keywords %}
-    <meta name="keywords" content="{{ keywords|join(', ') }}">
-    {% endif %}
-
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicons/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicons/site.webmanifest') }}">
+    <link rel="mask-icon" href="{{ url_for('static', filename='favicons/safari-pinned-tab.svg') }}" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ og_url|default(request.url) }}">
     <meta property="og:title" content="{{ og_title|default(meta_title) }}">
@@ -42,7 +47,12 @@
       "@type": "Organization",
       "name": "Mi Design",
       "url": "{{ url_for('home', lang='fa', _external=True) }}",
-      "logo": "{{ url_for('static', filename='images/logo.png', _external=True) }}"
+      "logo": "{{ url_for('static', filename='images/logo.png', _external=True) }}",
+      "sameAs": [
+        "https://t.me/Mehdi_Mirzaee1",
+        "https://www.instagram.com/mehdi_mi14?igsh=anl0dXR6dmVhb2k4",
+        "https://github.com/MehdiMi1"
+      ]
     }
     </script>
     {% if json_ld_data %}
@@ -50,7 +60,6 @@
         {{ json_ld_data|safe }}
     </script>
     {% endif %}
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVPHWBGBT8"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -58,9 +67,12 @@
       gtag('js', new Date());
       gtag('config', 'G-ZVPHWBGBT8');
     </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
         window.translations = {{ translations | tojson }};
         window.currentLang = "{{ lang }}";
@@ -70,13 +82,6 @@
     <div class="preloader" id="preloader">
         <div class="preloader-logo-container">
             <svg class="logo-sparkle" width="60" height="60" viewBox="0 0 24 24"><path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z"/></svg>
-        </div>
-        <div class="preloader-curtains">
-            <div class="preloader-panel"></div>
-            <div class="preloader-panel"></div>
-            <div class="preloader-panel"></div>
-            <div class="preloader-panel"></div>
-            <div class="preloader-panel"></div>
         </div>
     </div>
 
@@ -90,10 +95,10 @@
             <div class="nav-center">
                 <ul class="nav-menu desktop-nav">
                     <li><a href="{{ url_for('home', lang=lang) }}">{{ t.nav_home }}</a></li>
+                    <li><a href="{{ url_for('services', lang=lang) }}">{{ t.nav_services }}</a></li>
                     <li><a href="{{ url_for('projects', lang=lang) }}">{{ t.nav_projects }}</a></li>
                     <li><a href="{{ url_for('blog', lang=lang) }}">{{ t.nav_blog }}</a></li>
                     <li><a href="{{ url_for('stories', lang=lang) }}">{{ t.nav_stories }}</a></li>
-                    <li><a href="{{ url_for('ai_assistant', lang=lang) }}">{{ t.nav_ai }}</a></li>
                     <li><a href="{{ url_for('about', lang=lang) }}">{{ t.nav_about }}</a></li>
                 </ul>
             </div>
@@ -137,9 +142,9 @@
         <div class="news-ticker-content">
             {% for news_item in active_news * 2 %} {# Loop twice for seamless scroll #}
                 <div class="news-item">
-                    <span class="news-badge">{% if lang == 'fa' %}خبر روز{% else %}News{% endif %}</span>
+                    <span class="news-badge">{% if lang == 'fa' %}خبر روز{% elif lang == 'en' %}News{% elif lang == 'ar' %}أخبار{% else %}Nachrichten{% endif %}</span>
                     <a href="{{ news_item.link if news_item.link != '#' else '#' }}">
-                        {{ news_item.content_fa if lang == 'fa' else news_item.content_en }}
+                        {{ getattr(news_item, 'content_' + lang) }}
                     </a>
                 </div>
             {% endfor %}
@@ -150,10 +155,10 @@
     <div class="mobile-nav" id="mobile-nav">
         <ul class="nav-links">
              <li><a href="{{ url_for('home', lang=lang) }}">{{ t.nav_home }}</a></li>
+             <li><a href="{{ url_for('services', lang=lang) }}">{{ t.nav_services }}</a></li>
              <li><a href="{{ url_for('projects', lang=lang) }}">{{ t.nav_projects }}</a></li>
              <li><a href="{{ url_for('blog', lang=lang) }}">{{ t.nav_blog }}</a></li>
              <li><a href="{{ url_for('stories', lang=lang) }}">{{ t.nav_stories }}</a></li>
-             <li><a href="{{ url_for('ai_assistant', lang=lang) }}">{{ t.nav_ai }}</a></li>
              <li><a href="{{ url_for('about', lang=lang) }}">{{ t.nav_about }}</a></li>
              <li><a href="{{ url_for('contact', lang=lang) }}">{{ t.nav_contact }}</a></li>
         </ul>
@@ -174,7 +179,7 @@
             <div class="footer-grid">
                 <div class="footer-col footer-about">
                      <a href="{{ url_for('home', lang=lang) }}" class="logo">
-                        <span>Mi Design</span>
+                         <span>Mi Design</span>
                      </a>
                     <p class="footer-description">{{ t.footer_description }}</p>
                     <div class="social-icons">
@@ -206,7 +211,7 @@
                         {% if latest_footer_posts %}
                             {% for post in latest_footer_posts %}
                             <li>
-                                <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}">{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}</a>
+                                <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}">{{ getattr(post, 'title_' + lang) }}</a>
                                 <span class="post-date">{{ post.pub_date.strftime('%Y-%m-%d') }}</span>
                             </li>
                             {% endfor %}
@@ -223,6 +228,7 @@
     </footer>
 
     <a href="#" class="back-to-top-btn" id="back-to-top" aria-label="Go to top"><i class="fa-solid fa-arrow-up"></i></a>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </body>
 </html>

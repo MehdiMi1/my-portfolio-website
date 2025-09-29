@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% set t = translations[lang] %}
 
-{% block title %}
-    {{ t.blog_page_title }} | Mi Design
-{% endblock %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
 
 {% block content %}
 <section class="page-header">
@@ -30,7 +29,7 @@
             {% for post in posts %}
             <div class="post-card reveal-on-scroll" data-category="{% if lang == 'fa' %}{{ post.category_fa }}{% elif lang == 'en' %}{{ post.category_en }}{% elif lang == 'ar' %}{{ post.category_ar }}{% else %}{{ post.category_de }}{% endif %}">
                 <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="post-image-link">
-                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}">
+                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{% if lang == 'fa' %}تصویر مقاله: {{ post.title_fa }}{% else %}Article image for: {{ post.title_en }}{% endif %}" loading="lazy">
                 </a>
                 <div class="post-content">
                     <span class="post-category">{% if lang == 'fa' %}{{ post.category_fa }}{% elif lang == 'en' %}{{ post.category_en }}{% elif lang == 'ar' %}{{ post.category_ar }}{% else %}{{ post.category_de }}{% endif %}</span>
@@ -48,10 +47,12 @@
                 </div>
             </div>
             {% else %}
-                <p style="text-align: center; width: 100%;">
-                    {{ t.blog_no_articles_yet }}
-                </p>
+                <p style="text-align: center; width: 100%;">{{ t.blog_no_articles_yet }}</p>
             {% endfor %}
+
+            <div class="no-results-message" style="display: none; text-align: center; width: 100%; padding: 40px; color: var(--text-muted);">
+                {% if lang == 'fa' %}مقاله‌ای در این دسته‌بندی یافت نشد.{% else %}No articles found in this category.{% endif %}
+            </div>
         </div>
     </div>
 </section>

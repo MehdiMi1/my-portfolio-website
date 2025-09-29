@@ -50,7 +50,7 @@
             <h2 class="section-title reveal-on-scroll">{% if lang == 'fa' %}پروژه منتخب{% else %}Featured Project{% endif %}</h2>
             <div class="project-card-featured reveal-on-scroll">
                 <div class="project-image">
-                    <img src="{{ url_for('static', filename='images/projects/' + featured_project.image_file) if featured_project.image_file else '' }}" alt="{% if lang == 'fa' %}{{ featured_project.title_fa }}{% else %}{{ featured_project.title_en }}{% endif %}">
+                    <img src="{{ url_for('static', filename='images/projects/' + featured_project.image_file) if featured_project.image_file else '' }}" alt="{% if lang == 'fa' %}{{ featured_project.title_fa }}{% else %}{{ featured_project.title_en }}{% endif %}" loading="lazy">
                 </div>
                 <div class="project-content">
                     <h3>{% if lang == 'fa' %}{{ featured_project.title_fa }}{% elif lang == 'en' %}{{ featured_project.title_en }}{% elif lang == 'ar' %}{{ featured_project.title_ar }}{% else %}{{ featured_project.title_de }}{% endif %}</h3>
@@ -115,7 +115,7 @@
             {% for post in latest_posts %}
             <div class="post-card reveal-on-scroll">
                 <a href="{{ url_for('post_detail', lang=lang, slug=post.slug) }}" class="post-image-link">
-                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}">
+                    <img src="{{ url_for('static', filename='images/blog/' + post.image_file) if post.image_file else '' }}" alt="{% if lang == 'fa' %}{{ post.title_fa }}{% elif lang == 'en' %}{{ post.title_en }}{% elif lang == 'ar' %}{{ post.title_ar }}{% else %}{{ post.title_de }}{% endif %}" loading="lazy">
                 </a>
                 <div class="post-content">
                     <span class="post-category">{% if lang == 'fa' %}{{ post.category_fa }}{% elif lang == 'en' %}{{ post.category_en }}{% elif lang == 'ar' %}{{ post.category_ar }}{% else %}{{ post.category_de }}{% endif %}</span>
@@ -150,7 +150,7 @@
                     </a>
                 </div>
                 <div class="lead-magnet-image-container reveal-on-scroll" style="transition-delay: 0.2s;">
-                    <img src="{{ url_for('static', filename='images/checklist-mockup.png') }}" alt="Checklist Mockup" class="lead-magnet-image">
+                    <img src="{{ url_for('static', filename='images/checklist-mockup.png') }}" alt="Checklist Mockup" class="lead-magnet-image" loading="lazy">
                 </div>
             </div>
         </div>

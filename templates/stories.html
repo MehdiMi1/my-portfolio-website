@@ -2,7 +2,6 @@
 {% set t = translations[lang] %}
 
 {% block title %}{{ meta_title }}{% endblock %}
-
 {% block meta_description %}{{ meta_description }}{% endblock %}
 
 {% block content %}
@@ -28,11 +27,11 @@
 
 <div class="stories-container">
     {% for story in stories %}
-    <section class="story-parallax-item" data-category="{{ story.category_fa if lang == 'fa' else story.category_en }}">
+    <section class="story-parallax-item" data-category="{{ getattr(story, 'category_' + lang) }}">
         <div class="parallax-bg" style="background-image: url('{{ url_for('static', filename='images/stories/' + story.image_file) if story.image_file else '' }}');"></div>
         <div class="story-content container">
-            <h2 class="story-title">{{ story.title }}</h2>
-            <p class="story-excerpt">{{ story.excerpt }}</p>
+            <h2 class="story-title">{{ getattr(story, 'title_' + lang) }}</h2>
+            <p class="story-excerpt">{{ getattr(story, 'excerpt_' + lang) }}</p>
             <a href="{{ url_for('story_detail', lang=lang, slug=story.slug) }}" class="btn btn-primary">
                 {{ t.stories_continue_reading }}
             </a>
@@ -45,5 +44,9 @@
         </div>
     </section>
     {% endfor %}
+    
+    <div class="no-results-message" style="display: none; text-align: center; padding: 80px 20px; color: var(--text-muted);">
+        <h2>{% if lang == 'fa' %}داستانی در این دسته‌بندی یافت نشد.{% elif lang == 'en' %}No stories found in this category.{% elif lang == 'ar' %}لم يتم العثور على قصص في هذه الفئة.{% else %}Keine Geschichten in dieser Kategorie gefunden.{% endif %}</h2>
+    </div>
 </div>
 {% endblock %}
